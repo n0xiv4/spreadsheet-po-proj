@@ -29,4 +29,8 @@ public class Spreadsheet implements Serializable {
   public void insertContent(int row, int column, String contentSpecification) throws UnrecognizedEntryException /* FIXME maybe add exceptions */ {
     //FIXME implement method
   }
+
+  public static void main(String[] args) {
+    System.out.println("Hey!");
+  }
 }
