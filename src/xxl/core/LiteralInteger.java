@@ -1,0 +1,25 @@
+package xxl.core;
+
+public class LiteralInteger extends Literal {
+    /** Content value, held as int */
+    private int _value;
+
+    /**
+     * Grabs _value of the Literal (as Int)
+     *
+     * @returns the int value of the Literal
+     */
+    public int getIntValue() {
+        return _value;
+    }
+
+    /**
+     * Grabs _value of the Literal (as String)
+     *
+     * @returns the String value of the Literal
+     */
+    public String getStringValue() {
+        return Integer.toString(_value);
+    }
+    
+}
