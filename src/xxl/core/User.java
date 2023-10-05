@@ -14,7 +14,6 @@ public class User {
         // FIXME
     }
 
-    // (protected)
     void add(Spreadsheet sheet) {
         // FIXME
     }

@@ -4,6 +4,11 @@ public class LiteralString extends Literal {
     /** Content value, held as string */
     private String _value;
 
+    // FIXME add javadoc
+    LiteralString(String value) {
+        _value = value;
+    }
+    
     /**
      * Grabs _value of the Literal (as Int)
      *

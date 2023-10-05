@@ -18,6 +18,10 @@ public class Spreadsheet implements Serializable {
   // FIXME define contructor(s)
   // FIXME define methods
   
+  public Spreadsheet(int rows, int columns) {
+    // FIXME construct spreadsheet
+  }
+
   /**
    * Insert specified content in specified address.
    *
@@ -26,8 +30,8 @@ public class Spreadsheet implements Serializable {
    * @param contentSpecification the specification in a string format of the content to put
    *        in the specified cell.
    */
-  public void insertContent(int row, int column, String contentSpecification) throws UnrecognizedEntryException /* FIXME maybe add exceptions */ {
-    //FIXME implement method
+  public void insertContent(int row, int column, Content contentSpecification) throws UnrecognizedEntryException /* FIXME maybe add exceptions */ {
+    // FIXME implement method
   }
 
   public static void main(String[] args) {

@@ -4,6 +4,10 @@ public class LiteralInteger extends Literal {
     /** Content value, held as int */
     private int _value;
 
+    // FIXME add javadoc
+    LiteralInteger(int value) {
+        _value = value;
+    }
     /**
      * Grabs _value of the Literal (as Int)
      *

@@ -19,7 +19,7 @@ public class Cell {
     /**
      * Handles Cell's toString (common) method.
      *
-     * @returns a String representation of the current Cell 
+     * @return a String representation of the current Cell 
      * (and its contents)
      */
     public String toString() {
@@ -33,5 +33,10 @@ public class Cell {
      */
     void setContent(Content content) {
         _content = content;
+    }
+
+    // FIXME javadoc
+    Literal getValue() {
+        return _content.getValue();
     }
 }
