@@ -8,11 +8,13 @@ public class LiteralInteger extends Literal {
     LiteralInteger(int value) {
         _value = value;
     }
+
     /**
      * Grabs _value of the Literal (as Int)
      *
      * @returns the int value of the Literal
      */
+    @Override
     public int getIntValue() {
         return _value;
     }
@@ -22,6 +24,7 @@ public class LiteralInteger extends Literal {
      *
      * @returns the String value of the Literal
      */
+    @Override
     public String getStringValue() {
         return Integer.toString(_value);
     }

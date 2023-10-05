@@ -8,7 +8,7 @@ public class Reference extends Content {
     }
 
     Reference(int row, int column) {
-        _referencedCell = cell;
+        // FIXME
     }
 
     public String toString() {
