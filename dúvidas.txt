@@ -1,0 +1,7 @@
+diferença entre getValue e computeValue ??
+serialização... todas as classes?
+para que serve o hashcode no user ?
+objetivo deve ser tratar coisas como package, ou public?
+exceções... usar sempre ?? como ?
+
+

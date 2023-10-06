@@ -4,9 +4,7 @@ public abstract class Content {
 
     abstract Literal getValue();
 
-    public String toString() {
-        // FIXME
-    }
+    abstract public String toString();
     // FIXME other implementations. Decide how to implement
     // toString, if to use getInt and getString or else
 }

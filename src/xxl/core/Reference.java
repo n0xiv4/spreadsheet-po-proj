@@ -7,7 +7,7 @@ public class Reference extends Content {
         _referencedCell = cell;
     }
 
-    Reference(int row, int column) {
+    Reference(int row, int column, Spreadsheet spreadsheet) {
         // FIXME
     }
 

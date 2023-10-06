@@ -1,20 +1,32 @@
 package xxl.core;
 
+import java.util.Collection;
+import java.util.ArrayList;
+
+import xxl.core.exception.UnavailableNameException;
+
 // FIXME import classes
 
 public class User {
     private String _name;
-    // FIXME add collection for sheets
+    private Collection<Spreadsheet> _spreadsheets; 
+
+    User(String name) {
+        // FIXME package or public constructor?
+        // FIXME {@link UnavailableNameException}
+        _name = name;
+        _spreadsheets = new ArrayList<Spreadsheet>();
+    }
 
     public boolean equals(Object obj) {
-        // FIXME
+        // FIXME... what to compare?
     }
 
     public int getHashCode() {
-        // FIXME
+        return _name.hashCode();
     }
 
-    void add(Spreadsheet sheet) {
-        // FIXME
+    void linkSpreadsheet(Spreadsheet spreadsheet) {
+        _spreadsheets.add(spreadsheet);
     }
 }

@@ -8,12 +8,13 @@ public class LiteralString extends Literal {
     LiteralString(String value) {
         _value = value;
     }
-    
+
     /**
      * Grabs _value of the Literal (as Int)
      *
      * @returns the int value of the Literal
      */
+    @Override
     public int getIntValue() {
         return Integer.parseInt(_value);
     }
@@ -23,6 +24,7 @@ public class LiteralString extends Literal {
      *
      * @returns the String value of the Literal
      */
+    @Override
     public String getStringValue() {
         return _value;
     }

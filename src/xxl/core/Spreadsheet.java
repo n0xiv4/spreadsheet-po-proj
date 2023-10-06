@@ -2,6 +2,9 @@ package xxl.core;
 
 // FIXME import classes
 
+import java.util.Collection;
+import java.util.ArrayList;
+
 import java.io.Serial;
 import java.io.Serializable;
 
@@ -11,6 +14,9 @@ import xxl.core.exception.UnrecognizedEntryException;
  * Class representing a spreadsheet.
  */
 public class Spreadsheet implements Serializable {
+	private Collection<User> _users;
+	private Collection<Cell> _cells;
+  
   @Serial
   private static final long serialVersionUID = 202308312359L;
   
@@ -19,7 +25,9 @@ public class Spreadsheet implements Serializable {
   // FIXME define methods
   
   public Spreadsheet(int rows, int columns) {
-    // FIXME construct spreadsheet
+		_users = new ArrayList<User>();
+		// FIXME rest
+		// FIXME function (separate) to populate sheet with cells
   }
 
   /**
@@ -31,10 +39,20 @@ public class Spreadsheet implements Serializable {
    *        in the specified cell.
    */
   public void insertContent(int row, int column, Content contentSpecification) throws UnrecognizedEntryException /* FIXME maybe add exceptions */ {
-    // FIXME implement method
+	// FIXME implement method
   }
 
-  public static void main(String[] args) {
-    System.out.println("Hey!");
-  }
+	public Cell findCellByPosition(Position cellPos) {
+		for (Cell cell : _cells) {
+        if (cell.getPosition().equals(cellPos)) {
+            return cell;
+        }
+    }
+    return null;
+	}
+
+	void linkUser(User user) {
+		// FIXME caution with bidirectional link!! where does it start?
+		_users.add(user);
+	}
 }
