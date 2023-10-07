@@ -28,5 +28,10 @@ public class LiteralInteger extends Literal {
     public String getStringValue() {
         return Integer.toString(_value);
     }
+
+    @Override
+    public String toString() {
+        return "" + _value;
+    }
     
 }

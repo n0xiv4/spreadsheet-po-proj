@@ -6,6 +6,7 @@ public class DivFunction extends BinaryFunction {
         super(arg1, arg2);
     }
 
+    @Override
     protected Literal computeValue() {
         return Literal.div(super._contents[0].getValue(), super._contents[1].getValue());
     }

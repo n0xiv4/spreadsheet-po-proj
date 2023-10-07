@@ -19,7 +19,8 @@ public class User {
     }
 
     public boolean equals(Object obj) {
-        // FIXME... what to compare?
+        // FIXME
+        return true;
     }
 
     public int getHashCode() {

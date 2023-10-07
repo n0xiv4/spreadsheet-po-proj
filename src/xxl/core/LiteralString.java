@@ -28,5 +28,10 @@ public class LiteralString extends Literal {
     public String getStringValue() {
         return _value;
     }
+
+    @Override
+    public String toString() {
+        return "\'" + _value;
+    }
     
 }

@@ -98,10 +98,10 @@ class Parser {
 		char c = contentSpecification.charAt(0);
 
 		if (c == '=') {
-			parseContentExpression(contentSpecification.substring(1));
+			return parseContentExpression(contentSpecification.substring(1));
 		}
 		else {
-			parseLiteral(contentSpecification);
+			return parseLiteral(contentSpecification);
 		}
 	}
 
