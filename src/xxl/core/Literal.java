@@ -12,6 +12,11 @@ public abstract class Literal extends Content {
 		return this;
 	}
 
+    // FIXME temp
+    public String toString() {
+        return "" + getIntValue();
+    }
+
 	abstract public int getIntValue();
 	abstract public String getStringValue();
 

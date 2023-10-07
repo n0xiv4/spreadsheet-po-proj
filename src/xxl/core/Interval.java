@@ -1,11 +1,13 @@
 package xxl.core;
 
+import java.io.Serializable;
+
 /**
  * The {@link Interval} class represents a rectangular interval or range of positions within a
  * {@link Spreadsheet}. It defines the first and last positions of the interval and the associated
  * spreadsheet.
  */
-public class Interval {
+public class Interval implements Serializable {
 	private Position _firstPosition;
 	private Position _lastPosition;
 	/** _linkedSpreadsheet will only be used for Interval operations, hence currently unused. **/

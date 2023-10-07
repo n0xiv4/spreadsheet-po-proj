@@ -1,13 +1,14 @@
 package xxl.core;
 
 import java.util.Collection;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import xxl.core.exception.UnavailableNameException;
 
 // FIXME import classes
 
-public class User {
+public class User implements Serializable {
     private String _name;
     private Collection<Spreadsheet> _spreadsheets; 
 

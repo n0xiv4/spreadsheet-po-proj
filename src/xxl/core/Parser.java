@@ -8,7 +8,6 @@ import java.io.Reader;
 import java.util.Collection;
 import java.util.ArrayList;
 
-import xxl.app.exception.UnknownFunctionException;
 import xxl.core.exception.UnrecognizedEntryException;
 
 class Parser {
@@ -52,7 +51,7 @@ class Parser {
 		return _spreadsheet;
 	}
 
-	private void parseDimensions(BufferedReader reader) {
+	private void parseDimensions(BufferedReader reader) throws IOException, UnrecognizedEntryException {
 		int rows = -1;
 		int columns = -1;
 		
@@ -65,8 +64,7 @@ class Parser {
 				columns = Integer.parseInt(dimension[1]);
 			}
 			else {
-				// FIXME fix way to present line
-				throw new UnrecognizedEntryException(line);
+				throw new UnrecognizedEntryException(reader.readLine());
 			}
 		}
 
@@ -94,7 +92,7 @@ class Parser {
 	}
 
 	// parse the begining of an expression
-	Content parseContent(String contentSpecification) {
+	Content parseContent(String contentSpecification) throws UnrecognizedEntryException {
 		char c = contentSpecification.charAt(0);
 
 		if (c == '=') {
@@ -119,20 +117,26 @@ class Parser {
 		}
 	}
 
-	// contentSpecification is what comes after '='
-	private Content parseContentExpression(String contentSpecification) throws UnrecognizedEntryException /* more exceptions */ {
+	/**
+	 * Parses a content expression specified as a string and returns the corresponding {@link Content}.
+	 * If it contains a "(", it must be a {@link Function}. Otherwise, it's a {@link Reference}.
+	 *
+	 * @param contentSpecification The string representation of the content expression to parse.
+	 *                             (This is what comes after '=' in the input.)
+	 * @return The parsed {@link Content} object.
+	 * @throws UnrecognizedEntryException 
+	 */
+	private Content parseContentExpression(String contentSpecification) throws UnrecognizedEntryException {
 		if (contentSpecification.contains("(")) {
 			return parseFunction(contentSpecification);
 		}
-		// It is a reference
 		String[] address = contentSpecification.split(";");
-		// FIXME add method to convert two integers into Cell (goto Spreadsheet, find cells, etc, etc)
-		// Integer.parseInt(address[0].trim()), Integer.parseInt(address[1])
-		Cell cell;
-		return new Reference(cell);
+		/* Creates a {@link Position} which represents the position given. Then creates a reference to said position. */
+		Position referencedPosition = new Position(Integer.parseInt(address[0].trim()), Integer.parseInt(address[1]));
+		return new Reference(referencedPosition, _spreadsheet);
 	}
 
-	private Content parseFunction(String functionSpecification) throws UnrecognizedEntryException /* more exceptions */ {
+	private Content parseFunction(String functionSpecification) throws UnrecognizedEntryException {
 		String[] components = functionSpecification.split("[()]");
 		if (components[1].contains(",")) {
 			return parseBinaryFunction(components[0], components[1]);
@@ -142,7 +146,7 @@ class Parser {
 		// return parseIntervalFunction(components[0], components[1]);
 	}
 
-	private Content parseBinaryFunction(String functionName, String args) throws UnrecognizedEntryException /* , more Exceptions */ {
+	private Content parseBinaryFunction(String functionName, String args) throws UnrecognizedEntryException {
 		String[] arguments = args.split(",");
 		Content arg0 = parseArgumentExpression(arguments[0]);
 		Content arg1 = parseArgumentExpression(arguments[1]);
@@ -152,15 +156,17 @@ class Parser {
 			case "SUB" -> new SubFunction(arg0, arg1);
 			case "MUL" -> new MulFunction(arg0, arg1);
 			case "DIV" -> new DivFunction(arg0, arg1);
-			default -> throw new UnknownFunctionException(functionName);
+			default -> throw new UnrecognizedEntryException(functionName);
 		};
 	}
 
 	private Content parseArgumentExpression(String argExpression) throws UnrecognizedEntryException {
 		if (argExpression.contains(";")  && argExpression.charAt(0) != '\'') {
 			String[] address = argExpression.split(";");
-			return new Reference(Integer.parseInt(address[0].trim()), Integer.parseInt(address[1]));
-			// pode ser diferente do anterior em parseContentExpression
+			/* Creates a {@link Position} which represents the position given. Then creates a reference to said position. */
+			Position referencedPosition = new Position(Integer.parseInt(address[0].trim()), Integer.parseInt(address[1]));
+			return new Reference(referencedPosition, _spreadsheet);
+			// FIXME pode ser diferente do anterior em parseContentExpression ??
 		} else
 			return parseLiteral(argExpression);
 	}

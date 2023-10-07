@@ -1,6 +1,8 @@
 package xxl.core;
 
-public abstract class Content {
+import java.io.Serializable;
+
+public abstract class Content implements Serializable {
 
     abstract Literal getValue();
 

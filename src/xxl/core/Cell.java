@@ -1,6 +1,8 @@
 package xxl.core;
 
-public class Cell {
+import java.io.Serializable;
+
+public class Cell implements Serializable {
     private Content _content = null;
     private Position _position;
 
@@ -28,11 +30,10 @@ public class Cell {
      * Retrieves the position (row and column coordinates) of this {@link Cell}.
      *
      * @return A new {@link Position} object representing the row and column coordinates
-     * of this cell. For safety reasons, it returns a copy of the position and not the
-     * actual position object.
+     * of this cell.
      */
     Position getPosition() {
-        return new Position(_position.getRow(),_position.getColumn());
+        return _position;
     }
     
     /**
