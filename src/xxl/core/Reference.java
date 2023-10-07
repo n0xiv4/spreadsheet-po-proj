@@ -1,22 +1,20 @@
 package xxl.core;
 
 public class Reference extends Content {
-    private Cell _referencedCell;
+    private Position _referencePosition;
+    private Spreadsheet _spreadsheet;
 
-    Reference(Cell cell) {
-        _referencedCell = cell;
-    }
-
-    Reference(int row, int column, Spreadsheet spreadsheet) {
-        // FIXME
+    Reference(Position position, Spreadsheet spreadsheet) {
+        _referencePosition = position;
+        _spreadsheet = spreadsheet;
     }
 
     public String toString() {
         // FIXME not certain of implementation (YET)
-        return _referencedCell.toString();
+        return "";
     }
 
     Literal getValue() {
-        return _referencedCell.getValue();
+        return _spreadsheet.getValueInPosition(_referencePosition);
     }
 }

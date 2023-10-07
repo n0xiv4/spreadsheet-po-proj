@@ -125,7 +125,7 @@ class Parser {
 			return parseFunction(contentSpecification);
 		}
 		// It is a reference
-		String[] address = contentSpecificationaddress.split(";");
+		String[] address = contentSpecification.split(";");
 		// FIXME add method to convert two integers into Cell (goto Spreadsheet, find cells, etc, etc)
 		// Integer.parseInt(address[0].trim()), Integer.parseInt(address[1])
 		Cell cell;
@@ -137,6 +137,7 @@ class Parser {
 		if (components[1].contains(",")) {
 			return parseBinaryFunction(components[0], components[1]);
 		}
+		return null;
 		/* else, it's an interval function. these are not ready yet for the intermediate version */
 		// return parseIntervalFunction(components[0], components[1]);
 	}

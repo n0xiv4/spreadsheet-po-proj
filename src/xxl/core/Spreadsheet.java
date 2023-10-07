@@ -79,13 +79,26 @@ public class Spreadsheet implements Serializable {
 	 * @return The {@link Cell} with the specified position if found; {@code null} if no cell
 	 *         with the given position exists in the collection.
 	 */
-	Cell findCellByPosition(Position cellPos) {
+	private Cell findCellByPosition(Position cellPos) {
 		for (Cell cell: _cells) {
 				if (cell.getPosition().equals(cellPos)) {
 						return cell;
 				}
 		}
 		return null;
+	}
+
+	/**
+	 * Retrieves the value of a cell at the specified {@link Position} within the spreadsheet.
+	 *
+	 * @param cellPosition The {@link Position} object representing the row and column coordinates
+	 *                     of the cell to retrieve the value from.
+	 * @return The value of the cell at the specified position, represented as a {@link Literal}.
+	 * @throws CellNotFoundException If no cell exists at the provided position in the spreadsheet.
+	 */
+	Literal getValueInPosition(Position cellPosition) {
+		// FIXME maybe add exception ?
+		return findCellByPosition(cellPosition).getValue();
 	}
 
 	/**
