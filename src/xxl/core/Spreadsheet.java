@@ -11,11 +11,9 @@ import java.io.Serializable;
 import xxl.core.exception.UnrecognizedEntryException;
 
 /**
- * The {@link Spreadsheet} class represents a grid-based spreadsheet with cells.
+ * The {@code Spreadsheet} class represents a grid-based spreadsheet with cells.
  * It allows users to insert content into specific cells and maintains a collection
  * of users associated with the spreadsheet.
- *
- * @serial 202308312359L
  */
 public class Spreadsheet implements Serializable {
 	private List<User> _users;
@@ -109,5 +107,9 @@ public class Spreadsheet implements Serializable {
 	void linkUser(User user) {
 		// FIXME caution with bidirectional link!! where does it start?
 		_users.add(user);
+	}
+
+	public Position getEndPosition() {
+		return _spreadsheetRange.getLastPosition();
 	}
 }

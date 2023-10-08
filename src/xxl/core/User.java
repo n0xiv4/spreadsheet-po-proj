@@ -12,9 +12,7 @@ public class User implements Serializable {
     private String _name;
     private Collection<Spreadsheet> _spreadsheets; 
 
-    User(String name) {
-        // FIXME package or public constructor?
-        // FIXME {@link UnavailableNameException}
+    public User(String name) {
         _name = name;
         _spreadsheets = new ArrayList<Spreadsheet>();
     }

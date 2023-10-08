@@ -3,7 +3,7 @@ package xxl.core;
 import java.io.Serializable;
 
 /**
- * The {@link Position} class represents a two-dimensional position or coordinate
+ * The {@code Position} class represents a two-dimensional position or coordinate
  * consisting of a row and a column, that belongs to the {@link Cell}.
  */
 public class Position implements Serializable {

@@ -8,13 +8,9 @@ public class SubFunction extends BinaryFunction {
 
     @Override
     protected Literal computeValue() {
-        return Literal.sub(super._contents[0].getValue(), super._contents[1].getValue());
-    }
-
-    // FIXME... what's the diff between getValue and computeValue ?
-    @Override
-    Literal getValue() {
-        return computeValue();
+        Literal arg0 = super._contents[0].getValue();
+        Literal arg1 = super._contents[1].getValue();
+        return new LiteralInteger(arg0.getIntValue() - arg1.getIntValue());
     }
 
     @Override

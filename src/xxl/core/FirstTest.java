@@ -13,14 +13,32 @@ import xxl.core.exception.UnavailableFileException;
 public class FirstTest {
 	public static void main (String[] args) throws ImportFileException, FileNotFoundException, IOException, MissingFileAssociationException, UnavailableFileException {
 		Calculator calculator = new Calculator();
-		// calculator.importFile("D:\\Utilizadores\\Rodrigo\\Documentos\\OneDrive - IST\\OneDrive - Universidade de Lisboa\\Documentos\\2º Ano\\1º Semestre\\PO\\ProjetoGIT\\spreadsheet-po-proj\\bin\\xxl\\core\\test.txt");
+		// loadSerializer(calculator);
+		importFile(calculator);
+	}
 
+	static private void importFile(Calculator calculator) throws ImportFileException {
+		calculator.importFile("xxl\\core\\test.txt");
+		printSpreadsheet(calculator.getSpreadsheet());
+	}
+
+	/* Testar folha no Serializer atual (folha1.ser) */
+	static private void loadSerializer(Calculator calculator) throws UnavailableFileException {
+		// dar load ao ficheiro atual
 		calculator.load("xxl\\core\\folha1.ser");
 
 		Spreadsheet folha = calculator.getSpreadsheet();
+		printSpreadsheet(folha);
+	}
 
-		System.out.println(folha.getValueInPosition(new Position(1, 1)));
-		System.out.println(folha.getValueInPosition(new Position(1, 2)));
-		System.out.println(folha.getValueInPosition(new Position(1, 3)));
+	static private void printSpreadsheet(Spreadsheet spreadsheet) {
+		Position end = spreadsheet.getEndPosition();
+
+		for (int row = 1; row <= end.getRow(); row++) {
+			for (int column = 1; column <= end.getColumn(); column++) {
+				Position current = new Position(row, column);
+				System.out.println(current + "|" + spreadsheet.getValueInPosition(current));
+			}
+		}
 	}
 }

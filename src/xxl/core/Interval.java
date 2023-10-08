@@ -3,7 +3,7 @@ package xxl.core;
 import java.io.Serializable;
 
 /**
- * The {@link Interval} class represents a rectangular interval or range of positions within a
+ * The {@code Interval} class represents a rectangular interval or range of positions within a
  * {@link Spreadsheet}. It defines the first and last positions of the interval and the associated
  * spreadsheet.
  */

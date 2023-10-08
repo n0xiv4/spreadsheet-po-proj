@@ -3,7 +3,9 @@ package xxl.app.main;
 import pt.tecnico.uilib.forms.Form;
 import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
+
 import xxl.core.Calculator;
+import xxl.app.exception.FileOpenFailedException;
 // FIXME import classes
 
 /**
@@ -17,12 +19,10 @@ class DoOpen extends Command<Calculator> {
   
   @Override
   protected final void execute() throws CommandException {
-    /*
-      try {
-      //FIXME implement command
-      } catch (UnavailableFileException e) {
+    try {
+      
+    } catch (UnavailableFileException e) {
       throw new FileOpenFailedException(e);
-      }
-    */
+    }
   }
 }

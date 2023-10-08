@@ -3,13 +3,15 @@ package xxl.core;
 import java.io.IOException;
 import java.io.FileReader;
 import java.io.BufferedReader;
-import java.io.Reader;
-
-import java.util.Collection;
-import java.util.ArrayList;
 
 import xxl.core.exception.UnrecognizedEntryException;
 
+/**
+ * The {@code Parser} class is responsible for parsing and interpreting input data
+ * to construct and manipulate spreadsheet content.
+ * It includes methods for parsing dimensions, lines, and content expressions.
+ * Additionally, it handles the interpretation of functions and literals.
+ */
 class Parser {
 
 	private Spreadsheet _spreadsheet;
@@ -51,6 +53,14 @@ class Parser {
 		return _spreadsheet;
 	}
 
+	/**
+	 * Parses and extracts the dimensions (number of rows and columns) of a spreadsheet
+	 * from the given input {@link BufferedReader}.
+	 *
+	 * @param reader The {@link BufferedReader} used to read the input lines.
+	 * @throws IOException If an I/O error occurs while reading from the reader.
+	 * @throws UnrecognizedEntryException If the dimensions cannot be recognized or contain invalid values.
+	 */
 	private void parseDimensions(BufferedReader reader) throws IOException, UnrecognizedEntryException {
 		int rows = -1;
 		int columns = -1;
@@ -74,6 +84,13 @@ class Parser {
 		_spreadsheet = new Spreadsheet(rows, columns);
 	}
 
+	/**
+	 * Parses a line of input and inserts content into the spreadsheet based on the provided line.
+	 *
+	 * @param line The input line to parse and process.
+	 * @throws UnrecognizedEntryException If the line cannot be recognized
+	 *                                    or contains invalid entries.
+	 */
 	private void parseLine(String line) throws UnrecognizedEntryException /* FIXME more exceptions? */{
 		String[] components = line.split("\\|");
 
@@ -91,7 +108,13 @@ class Parser {
 		}
 	}
 
-	// parse the begining of an expression
+	/**
+	 * Parses the beginning of a content expression and returns the corresponding {@link Content}.
+	 *
+	 * @param contentSpecification The content specification string to parse, which may start with an '=' character.
+	 * @return The parsed {@link Content} object.
+	 * @throws UnrecognizedEntryException If the content specification cannot be recognized or contains invalid syntax.
+	 */
 	Content parseContent(String contentSpecification) throws UnrecognizedEntryException {
 		char c = contentSpecification.charAt(0);
 
@@ -103,6 +126,13 @@ class Parser {
 		}
 	}
 
+	/**
+	 * Parses a literal expression represented as a string and returns the corresponding {@link Literal}.
+	 *
+	 * @param literalExpression The string representation of the literal expression to parse.
+	 * @return The parsed {@link Literal} object.
+	 * @throws UnrecognizedEntryException If the literal expression cannot be recognized or contains invalid syntax.
+	 */
 	private Literal parseLiteral(String literalExpression) throws UnrecognizedEntryException {
 		if (literalExpression.charAt(0) == '\'')
 			return new LiteralString(literalExpression);
@@ -124,7 +154,7 @@ class Parser {
 	 * @param contentSpecification The string representation of the content expression to parse.
 	 *                             (This is what comes after '=' in the input.)
 	 * @return The parsed {@link Content} object.
-	 * @throws UnrecognizedEntryException 
+	 * @throws UnrecognizedEntryException If the content specification cannot be recognized or contains invalid syntax.
 	 */
 	private Content parseContentExpression(String contentSpecification) throws UnrecognizedEntryException {
 		if (contentSpecification.contains("(")) {
@@ -136,16 +166,31 @@ class Parser {
 		return new Reference(referencedPosition, _spreadsheet);
 	}
 
+	/**
+	 * Parses a function expression represented as a string and returns the corresponding {@link Content}.
+	 *
+	 * @param functionSpecification The string representation of the function expression to parse.
+	 * @return The parsed {@link Content} object.
+	 * @throws UnrecognizedEntryException If the function expression cannot be recognized or contains invalid syntax.
+	 */
 	private Content parseFunction(String functionSpecification) throws UnrecognizedEntryException {
 		String[] components = functionSpecification.split("[()]");
 		if (components[1].contains(",")) {
 			return parseBinaryFunction(components[0], components[1]);
 		}
-		return null;
+		throw new UnrecognizedEntryException(components[0]);
 		/* else, it's an interval function. these are not ready yet for the intermediate version */
 		// return parseIntervalFunction(components[0], components[1]);
 	}
 
+	/**
+	 * Parses a binary function expression and returns the corresponding {@link Content}.
+	 *
+	 * @param functionName The name of the binary function (e.g., "ADD", "SUB").
+	 * @param args         The arguments of the binary function as a string.
+	 * @return The parsed {@link Content} object representing the binary function.
+	 * @throws UnrecognizedEntryException If the function or its arguments cannot be recognized or contains invalid syntax.
+	 */
 	private Content parseBinaryFunction(String functionName, String args) throws UnrecognizedEntryException {
 		String[] arguments = args.split(",");
 		Content arg0 = parseArgumentExpression(arguments[0]);
@@ -160,6 +205,13 @@ class Parser {
 		};
 	}
 
+	/**
+	 * Parses an argument expression represented as a string and returns the corresponding {@link Content}.
+	 *
+	 * @param argExpression The string representation of the argument expression to parse.
+	 * @return The parsed {@link Content} object.
+	 * @throws UnrecognizedEntryException If the argument expression cannot be recognized or contains invalid syntax.
+	 */
 	private Content parseArgumentExpression(String argExpression) throws UnrecognizedEntryException {
 		if (argExpression.contains(";")  && argExpression.charAt(0) != '\'') {
 			String[] address = argExpression.split(";");
@@ -185,28 +237,4 @@ class Parser {
 		};
 	}
 	*/
-
-	/* Na classe Spreadsheet preciso de algo com a seguinte funcionalidade
-	Range createRange(String range) throws ? {
-		String[] rangeCoordinates;
-		int firstRow, firstColumn, lastRow, lastColumn;
-		
-		if (range.indexOf(':') != -1) {
-			rangeCoordinates = range.split("[:;]");
-			firstRow = Integer.parseInt(rangeCoordinates[0]);
-			firstColumn = Integer.parseInt(rangeCoordinates[1]);
-			lastRow = Integer.parseInt(rangeCoordinates[2]);
-			lastColumn = Integer.parseInt(rangeCoordinates[3]);
-		} else {
-			rangeCoordinates = range.split(";");
-			firstRow = lastRow = Integer.parseInt(rangeCoordinates[0]);
-			firstColumn = lastColumn = Integer.parseInt(rangeCoordinates[1]);
-		}
-
-		// check if coordinates are valid
-		// if yes
-		return new Range with firstRow, firstColumn, lastRow, lastColumn and spreadsheet;
-	}
-	*/
-	
 }

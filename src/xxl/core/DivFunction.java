@@ -8,12 +8,9 @@ public class DivFunction extends BinaryFunction {
 
     @Override
     protected Literal computeValue() {
-        return Literal.div(super._contents[0].getValue(), super._contents[1].getValue());
-    }
-
-    @Override
-    Literal getValue() {
-        return computeValue();
+        Literal arg0 = super._contents[0].getValue();
+        Literal arg1 = super._contents[1].getValue();
+        return new LiteralInteger(arg0.getIntValue() / arg1.getIntValue());
     }
 
     @Override
