@@ -1,9 +1,6 @@
 package xxl.core;
 
-
-import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 
 import xxl.core.exception.ImportFileException;
@@ -18,7 +15,7 @@ public class FirstTest {
 	}
 
 	static private void importFile(Calculator calculator) throws ImportFileException {
-		calculator.importFile("xxl\\core\\test.txt");
+		calculator.importFile(System.getProperty("user.dir") + "/xxl/core/test.txt");
 		printSpreadsheet(calculator.getSpreadsheet());
 	}
 

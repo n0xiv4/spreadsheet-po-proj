@@ -1,18 +1,28 @@
 package xxl.core;
 
+/**
+ * The {@code LiteralInteger} class represents an integer literal value in a spreadsheet.
+ * It extends the {@link Literal} class and provides methods to retrieve the integer value,
+ * string representation, and a textual representation of the integer.
+ */
 public class LiteralInteger extends Literal {
-    /** Content value, held as int */
+
+    /** The integer value stored in the literal. */
     private int _value;
 
-    // FIXME add javadoc
+    /**
+     * Constructs a new {@code LiteralInteger} with the specified integer value.
+     *
+     * @param value The integer value to be stored in the literal.
+     */
     LiteralInteger(int value) {
         _value = value;
     }
 
     /**
-     * Grabs _value of the Literal (as Int)
+     * Retrieves the integer value of the literal.
      *
-     * @returns the int value of the Literal
+     * @return The integer value of the literal.
      */
     @Override
     public int getIntValue() {
@@ -20,18 +30,22 @@ public class LiteralInteger extends Literal {
     }
 
     /**
-     * Grabs _value of the Literal (as String)
+     * Retrieves the string representation of the integer value.
      *
-     * @returns the String value of the Literal
+     * @return The string representation of the integer.
      */
     @Override
     public String getStringValue() {
-        return Integer.toString(_value);
+        return "";
     }
 
+    /**
+     * Returns a string representation of the {@code LiteralInteger}.
+     *
+     * @return A string representation of the integer value.
+     */
     @Override
     public String toString() {
-        return "" + _value;
+        return Integer.toString(_value);
     }
-    
 }

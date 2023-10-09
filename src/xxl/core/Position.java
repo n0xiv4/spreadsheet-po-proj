@@ -7,6 +7,7 @@ import java.io.Serializable;
  * consisting of a row and a column, that belongs to the {@link Cell}.
  */
 public class Position implements Serializable {
+	
 	private int _row;
 	private int _column;
 

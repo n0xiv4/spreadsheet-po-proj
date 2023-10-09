@@ -20,6 +20,5 @@ class DoNew extends Command<Calculator> {
     int lines = Form.requestInteger(Message.lines());
     int columns = Form.requestInteger(Message.columns());
     
-    
   }
 }

@@ -6,6 +6,7 @@ package xxl.core;
  * and string representations of a null literal.
  */
 public class LiteralNull extends Literal {
+    
     /**
      * Returns the default integer value for a null literal, which is 0.
      *

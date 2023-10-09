@@ -14,18 +14,23 @@ import xxl.core.exception.UnrecognizedEntryException;
  * The {@code Spreadsheet} class represents a grid-based spreadsheet with cells.
  * It allows users to insert content into specific cells and maintains a collection
  * of users associated with the spreadsheet.
+ * 
+ * @Serial 202308312359L
  */
 public class Spreadsheet implements Serializable {
+
+	/** The list where all the users of the Spreadsheet are stored. */
 	private List<User> _users;
+
+	/** The list that holds all the Cells that are a part of the Spreadsheet. */
 	private List<Cell> _cells;
+
+	/** The range of the Spreadsheet, represented as interval. */
 	private Interval _spreadsheetRange;
 	
+	/** The serial version UID for ensuring version compatibility during serialization. */
 	@Serial
 	private static final long serialVersionUID = 202308312359L;
-	
-	// FIXME define attributes
-	// FIXME define contructor(s)
-	// FIXME define methods
 	
 	/**
 	 * Constructs a new {@link Spreadsheet} with the specified number of rows and columns.
@@ -39,7 +44,6 @@ public class Spreadsheet implements Serializable {
 		_spreadsheetRange = new Interval(new Position(rows, columns), this);
 
 		populateSpreadsheet();
-		// FIXME aditional things to implement
 	}
 
 	/**
@@ -64,9 +68,8 @@ public class Spreadsheet implements Serializable {
 	 * @param contentSpecification the specification in a string format of the content to put
 	 *        in the specified cell.
 	 */
-	public void insertContent(int row, int column, Content contentSpecification) throws UnrecognizedEntryException /* FIXME maybe add exceptions */ {
+	public void insertContent(int row, int column, Content contentSpecification) throws UnrecognizedEntryException {
 		findCellByPosition(new Position(row, column)).setContent(contentSpecification);
-		// FIXME... exceptions ?
 	}
 
 	/**
@@ -79,9 +82,9 @@ public class Spreadsheet implements Serializable {
 	 */
 	private Cell findCellByPosition(Position cellPos) {
 		for (Cell cell: _cells) {
-				if (cell.getPosition().equals(cellPos)) {
-						return cell;
-				}
+			if (cell.getPosition().equals(cellPos)) {
+					return cell;
+			}
 		}
 		return null;
 	}
@@ -109,8 +112,8 @@ public class Spreadsheet implements Serializable {
 	 *
 	 * @param user The {@link User} to link with the spreadsheet.
 	 */
-	void linkUser(User user) {
-		// FIXME caution with bidirectional link!! where does it start?
+	public void linkUser(User user) {
+		user.linkSpreadsheet(this);
 		_users.add(user);
 	}
 

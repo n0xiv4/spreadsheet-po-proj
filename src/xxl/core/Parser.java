@@ -14,6 +14,7 @@ import xxl.core.exception.UnrecognizedEntryException;
  */
 class Parser {
 
+	/** The spreadsheet to parse to. */
 	private Spreadsheet _spreadsheet;
 	
 	/**
@@ -218,7 +219,6 @@ class Parser {
 			/* Creates a {@link Position} which represents the position given. Then creates a reference to said position. */
 			Position referencedPosition = new Position(Integer.parseInt(address[0].trim()), Integer.parseInt(address[1]));
 			return new Reference(referencedPosition, _spreadsheet);
-			// FIXME pode ser diferente do anterior em parseContentExpression ??
 		} else
 			return parseLiteral(argExpression);
 	}

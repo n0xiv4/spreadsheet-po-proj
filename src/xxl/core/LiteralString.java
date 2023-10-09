@@ -1,37 +1,50 @@
 package xxl.core;
 
+/**
+ * The {@code LiteralString} class represents a string literal value in a spreadsheet.
+ * It extends the {@link Literal} class and provides methods to retrieve the string value
+ * and a textual representation of the string.
+ */
 public class LiteralString extends Literal {
-    /** Content value, held as string */
+    /** The string value stored in the literal. */
     private String _value;
 
-    // FIXME add javadoc
+    /**
+     * Constructs a new {@code LiteralString} with the specified string value.
+     *
+     * @param value The string value to be stored in the literal.
+     */
     LiteralString(String value) {
         _value = value;
     }
 
     /**
-     * Grabs _value of the Literal (as Int)
+     * Retrieves the integer value of the literal, which is always zero for string literals.
      *
-     * @returns the int value of the Literal
+     * @return The integer value of zero.
      */
     @Override
     public int getIntValue() {
-        return Integer.parseInt(_value);
+        return 0;
     }
 
     /**
-     * Grabs _value of the Literal (as String)
+     * Retrieves the string value of the literal.
      *
-     * @returns the String value of the Literal
+     * @return The string value of the literal.
      */
     @Override
     public String getStringValue() {
         return _value;
     }
 
+    /**
+     * Returns a string representation of the {@code LiteralString}.
+     *
+     * @return A string representation of the string value.
+     */
     @Override
     public String toString() {
-        return "\'" + _value;
+        return _value;
     }
-    
 }
