@@ -1,6 +1,7 @@
 package xxl.app.main;
 
 import pt.tecnico.uilib.forms.Form;
+import pt.tecnico.uilib.Display;
 import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
 import xxl.core.Calculator;
@@ -16,6 +17,9 @@ class DoNew extends Command<Calculator> {
   
   @Override
   protected final void execute() throws CommandException {
-    // FIXME implement command
+    int lines = Form.requestInteger(Message.lines());
+    int columns = Form.requestInteger(Message.columns());
+    
+    
   }
 }

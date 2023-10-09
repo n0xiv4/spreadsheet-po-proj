@@ -99,6 +99,11 @@ public class Spreadsheet implements Serializable {
 		return findCellByPosition(cellPosition).getValue();
 	}
 
+	// FIXME temporary !!!!!!!!!!!!
+	void printCellInPosition(Position cellPosition) {
+		System.out.println(findCellByPosition(cellPosition));
+	}
+
 	/**
 	 * Links a {@link User} to the spreadsheet.
 	 *

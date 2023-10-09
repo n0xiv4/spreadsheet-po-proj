@@ -8,14 +8,14 @@ public class AddFunction extends BinaryFunction {
 
     @Override
     protected Literal computeValue() {
-        Literal arg0 = super._contents[0].getValue();
-        Literal arg1 = super._contents[1].getValue();
-        return new LiteralInteger(arg0.getIntValue() + arg1.getIntValue());
+        Literal arg1 = super._contents[0].getValue();
+        Literal arg2 = super._contents[1].getValue();
+        return new LiteralInteger(arg1.getIntValue() + arg2.getIntValue());
     }
 
     @Override
     public String toString() {
         // FIXME
-        return "";
+        return computeValue().getIntValue() + "=ADD(" + _contents[0].toString() + _contents[1].toString() + ")";
     }
 }

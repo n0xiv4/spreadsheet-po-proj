@@ -10,8 +10,11 @@ public class Reference extends Content {
     }
 
     public String toString() {
-        // FIXME not certain of implementation (YET)
-        return "";
+        return getValue() + "=" + _referencePosition.toString();
+    }
+
+    public String posToString() {
+        return _referencePosition.toString();
     }
 
     Literal getValue() {

@@ -37,7 +37,7 @@ public class FirstTest {
 		for (int row = 1; row <= end.getRow(); row++) {
 			for (int column = 1; column <= end.getColumn(); column++) {
 				Position current = new Position(row, column);
-				System.out.println(current + "|" + spreadsheet.getValueInPosition(current));
+				spreadsheet.printCellInPosition(current);
 			}
 		}
 	}

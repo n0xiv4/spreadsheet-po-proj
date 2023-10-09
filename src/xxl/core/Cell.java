@@ -43,8 +43,7 @@ public class Cell implements Serializable {
      * (and its contents)
      */
     public String toString() {
-        // More maybe? FIXME later
-        return _position.toString();
+        return _position.toString() + "|" + _content.toString();
     }
 
     /**
