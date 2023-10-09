@@ -92,7 +92,7 @@ class Parser {
 	 * @throws UnrecognizedEntryException If the line cannot be recognized
 	 *                                    or contains invalid entries.
 	 */
-	private void parseLine(String line) throws UnrecognizedEntryException /* FIXME more exceptions? */{
+	private void parseLine(String line) throws UnrecognizedEntryException {
 		String[] components = line.split("\\|");
 
 		if (components.length == 1) { // do nothing
