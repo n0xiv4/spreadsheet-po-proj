@@ -3,7 +3,7 @@ package xxl.core;
 import java.io.Serializable;
 
 public class Cell implements Serializable {
-    private Content _content = null;
+    private Content _content;
     private Position _position;
 
     /**
@@ -14,6 +14,7 @@ public class Cell implements Serializable {
      */
     public Cell(int row, int column) {
         _position = new Position(row, column);
+        _content = new LiteralNull();
     }
 
     /**

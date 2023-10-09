@@ -18,7 +18,7 @@ public class FirstTest {
 	}
 
 	static private void importFile(Calculator calculator) throws ImportFileException {
-		calculator.importFile("xxl\\core\\test.txt");
+		calculator.importFile("/home/duarteponce/Documentos/Java/projeto/spreadsheet-po-proj/src/xxl/core/test.txt");
 		printSpreadsheet(calculator.getSpreadsheet());
 	}
 

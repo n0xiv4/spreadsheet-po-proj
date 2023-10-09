@@ -15,7 +15,16 @@ public class AddFunction extends BinaryFunction {
 
     @Override
     public String toString() {
-        // FIXME
-        return computeValue().getIntValue() + "=ADD(" + _contents[0].toString() + _contents[1].toString() + ")";
+        String arg1 = parseArgument(_contents[0].toString());
+        String arg2 = parseArgument(_contents[1].toString());
+        return computeValue().getIntValue() + "=ADD(" + arg1 + "," + arg2 + ")";
+    }
+
+    private String parseArgument(String argument) {
+        if (argument.contains("=")) {
+            String[] args = argument.split("=");
+            return args[1];
+        }
+        return argument;
     }
 }

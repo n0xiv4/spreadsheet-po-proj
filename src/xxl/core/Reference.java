@@ -13,10 +13,6 @@ public class Reference extends Content {
         return getValue() + "=" + _referencePosition.toString();
     }
 
-    public String posToString() {
-        return _referencePosition.toString();
-    }
-
     Literal getValue() {
         return _spreadsheet.getValueInPosition(_referencePosition);
     }
