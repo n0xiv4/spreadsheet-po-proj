@@ -12,11 +12,12 @@ class DoShow extends Command<Spreadsheet> {
 
   DoShow(Spreadsheet receiver) {
     super(Label.SHOW, receiver);
-    // FIXME add fields
+    addStringField("gamma", Message.address());
   }
   
   @Override
   protected final void execute() throws CommandException {
-    // FIXME implement command
+    String gamma = stringField("gamma");
+    _receiver.visualizeGamma(gamma);
   }
 }

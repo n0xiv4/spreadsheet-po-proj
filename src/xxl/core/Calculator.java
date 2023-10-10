@@ -8,8 +8,12 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
 import java.util.Map;
+
+import org.w3c.dom.ranges.Range;
+
 import java.util.HashMap;
 
+import xxl.app.exception.InvalidCellRangeException;
 import xxl.core.exception.ImportFileException;
 import xxl.core.exception.MissingFileAssociationException;
 import xxl.core.exception.UnavailableFileException;
@@ -55,6 +59,10 @@ public class Calculator {
 		_currentFile = filename;
 	}
 
+	public String getCurrentFile() {
+		return _currentFile;
+	}
+
 	/**
 	 * Return the current spreadsheet.
 	 *
@@ -71,7 +79,7 @@ public class Calculator {
 	 * @throws MissingFileAssociationException if the current network does not have a file.
 	 * @throws IOException if there is some error while serializing the state of the network to disk.
 	 */
-	public void save() throws FileNotFoundException, MissingFileAssociationException, IOException {
+	public void saveFile() throws FileNotFoundException, MissingFileAssociationException, IOException {
 		FileOutputStream fileOut = new FileOutputStream(_currentFile);
 		ObjectOutputStream out = new ObjectOutputStream(fileOut);
 		out.writeObject(_spreadsheet);
@@ -88,7 +96,7 @@ public class Calculator {
 	 * @throws MissingFileAssociationException if the current network does not have a file.
 	 * @throws IOException if there is some error while serializing the state of the network to disk.
 	 */
-	public void saveAs(String filename) throws FileNotFoundException, MissingFileAssociationException, IOException {
+	public void saveFileAs(String filename) throws FileNotFoundException, MissingFileAssociationException, IOException {
 		FileOutputStream fileOut = new FileOutputStream(filename);
 		ObjectOutputStream out = new ObjectOutputStream(fileOut);
 		out.writeObject(_spreadsheet);
@@ -102,7 +110,7 @@ public class Calculator {
 	 * @throws UnavailableFileException if the specified file does not exist or there is
 	 *         an error while processing this file.
 	 */
-	public void load(String filename) throws UnavailableFileException {
+	public void loadFile(String filename) throws UnavailableFileException {
 		try {
 			FileInputStream fileIn = new FileInputStream(filename);
 			ObjectInputStream in = new ObjectInputStream(fileIn);
@@ -134,6 +142,11 @@ public class Calculator {
 		}
 	} 
 
+	public void createSpreadsheet(int rows, int columns) {
+		_spreadsheet = new Spreadsheet(rows, columns);
+		_spreadsheet.linkUser(_activeUser);
+	}
+
 	/**
 	 * Creates a new user with the specified username and adds it to the user collection if the username does not already exist.
 	 *
@@ -156,7 +169,7 @@ public class Calculator {
 	 * @return {@code true} if a user with the same properties (e.g., username) exists, {@code false} otherwise.
 	 */
 	private boolean userExists(User userToTest) {
-		for (User user : _users.values()) {
+		for (User user: _users.values()) {
 			if (user.equals(userToTest)) {
 				return true;
 			}

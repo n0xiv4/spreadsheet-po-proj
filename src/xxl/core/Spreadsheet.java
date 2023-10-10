@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.io.Serial;
 import java.io.Serializable;
 
+import xxl.app.exception.InvalidCellRangeException;
 import xxl.core.exception.UnrecognizedEntryException;
 
 /**
@@ -103,8 +104,14 @@ public class Spreadsheet implements Serializable {
 	}
 
 	// FIXME temporary !!!!!!!!!!!!
-	void printCellInPosition(Position cellPosition) {
-		System.out.println(findCellByPosition(cellPosition));
+	String visualizeCellInPosition(Position cellPosition) {
+		return findCellByPosition(cellPosition).toString();
+	}
+
+	// FIXME javadoc
+	public String visualizeGamma(String gamma) throws InvalidCellRangeException {
+		Interval intervalToVisualize = new Interval(gamma, this);
+		return intervalToVisualize.readInterval();
 	}
 
 	/**
@@ -120,4 +127,5 @@ public class Spreadsheet implements Serializable {
 	public Position getEndPosition() {
 		return _spreadsheetRange.getLastPosition();
 	}
+
 }

@@ -23,6 +23,45 @@ public class Position implements Serializable {
 	}
 
 	/**
+	 * Checks if two positions are compatible for defining an interval.
+	 * Two positions are considered compatible if they meet one of the following conditions:
+	 * - They have the same row, and their columns are in ascending order.
+	 * - They have the same column, and their rows are in ascending order.
+	 *
+	 * @param firstPosition  The first {@link Position} to be compared.
+	 * @param secondPosition The second {@link Position} to be compared.
+	 * @return {@code true} if the positions are compatible for defining an interval, {@code false} otherwise.
+	 */
+	public static boolean isCompatibleForInterval(Position firstPosition, Position secondPosition) {
+		// Check if either position is not valid
+		if (!firstPosition.isValid() || !secondPosition.isValid()) {
+			return false;
+		}
+
+		// Check if rows are equal and columns are in ascending order
+		if (firstPosition.getRow() == secondPosition.getRow() && firstPosition.getColumn() <= secondPosition.getColumn()) {
+			return true;
+		}
+
+		// Check if columns are equal and rows are in ascending order
+		if (firstPosition.getColumn() == secondPosition.getColumn() && firstPosition.getRow() <= secondPosition.getRow()) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Checks if the current {@link Position} is valid.
+	 * A valid position must have both row and column indices greater than zero.
+	 *
+	 * @return {@code true} if the position is valid, {@code false} otherwise.
+	 */
+	private boolean isValid() {
+		return _row > 0 && _column > 0;
+	}
+
+	/**
      * Gets the row value of this {@link Position}.
      *
      * @return The row value.

@@ -22,7 +22,7 @@ public class FirstTest {
 	/* Testar folha no Serializer atual (folha1.ser) */
 	static private void loadSerializer(Calculator calculator) throws UnavailableFileException {
 		// dar load ao ficheiro atual
-		calculator.load("xxl\\core\\folha1.ser");
+		calculator.loadFile("xxl\\core\\folha1.ser");
 
 		Spreadsheet folha = calculator.getSpreadsheet();
 		printSpreadsheet(folha);
@@ -34,7 +34,7 @@ public class FirstTest {
 		for (int row = 1; row <= end.getRow(); row++) {
 			for (int column = 1; column <= end.getColumn(); column++) {
 				Position current = new Position(row, column);
-				spreadsheet.printCellInPosition(current);
+				System.out.println(spreadsheet.visualizeCellInPosition(current));
 			}
 		}
 	}
