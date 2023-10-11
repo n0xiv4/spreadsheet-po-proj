@@ -36,7 +36,7 @@ public abstract class BinaryFunction extends Function {
     public String toString() {
         String arg1 = parseArgument(_contents[0].toString());
         String arg2 = parseArgument(_contents[1].toString());
-        return computeValue().getIntValue() + "=" + _functionName + "(" + arg1 + "," + arg2 + ")";
+        return computeValue() + "=" + _functionName + "(" + arg1 + "," + arg2 + ")";
     }
 
     /**

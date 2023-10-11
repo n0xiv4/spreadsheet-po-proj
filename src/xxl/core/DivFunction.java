@@ -26,7 +26,10 @@ public class DivFunction extends BinaryFunction {
     protected Literal computeValue() {
         Literal arg0 = super._contents[0].getValue();
         Literal arg1 = super._contents[1].getValue();
-        return new LiteralInteger(arg0.getIntValue() / arg1.getIntValue());
+        if (arg1.getIntValue() != 0) {
+            return new LiteralInteger(arg0.getIntValue() / arg1.getIntValue());
+        }
+        return new LiteralString("#VALUE");
     }
 }
 
