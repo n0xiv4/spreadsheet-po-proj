@@ -32,9 +32,16 @@ public class Reference extends Content {
      */
     @Override
     public String toString() {
-        return getValue() + "=" + _referencePosition.toString();
+        return parseLiteralValue() + "=" + _referencePosition.toString();
     }
 
+
+    private String parseLiteralValue() {
+        if (getValue().toString().equals("")) {
+            return "#VALUE";
+        }
+        return getValue().toString();
+    }
     /**
      * Retrieves the value of the referenced cell from the associated spreadsheet.
      *

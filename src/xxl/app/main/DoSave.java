@@ -1,13 +1,13 @@
 package xxl.app.main;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
 import pt.tecnico.uilib.forms.Form;
 import pt.tecnico.uilib.menus.Command;
-import xxl.app.exception.FileOpenFailedException;
+
 import xxl.core.Calculator;
 import xxl.core.exception.MissingFileAssociationException;
+import xxl.app.exception.FileOpenFailedException;
+
+import java.io.IOException;
 
 /**
  * Save to file under current name (if unnamed, query for name).
@@ -25,7 +25,7 @@ class DoSave extends Command<Calculator> {
         _receiver.saveFile();
       }
       else {
-        _receiver.saveFileAs(Form.requestString(Message.saveAs()));
+        _receiver.saveFileAs(Form.requestString(Message.newSaveAs()));
       }
     }
     catch (MissingFileAssociationException | IOException e) {

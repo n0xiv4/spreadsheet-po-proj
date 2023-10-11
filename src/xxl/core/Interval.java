@@ -57,6 +57,10 @@ public class Interval implements Serializable {
 		_firstPosition = intervalPositions[0];
 		_lastPosition = intervalPositions[1];
 		_linkedSpreadsheet = spreadsheet;
+		// FIXME
+		if (!isInsideSpreadsheet()) {
+			throw new InvalidCellRangeException(gamma);
+		}
 	}
 
 	/**
@@ -136,5 +140,11 @@ public class Interval implements Serializable {
 			}
 		}
 		return interval;
+	}
+
+	// FIXME
+	public boolean isInsideSpreadsheet() {
+		// If compareTo = 1, lastPosition is OUT of the spreadsheet range.
+		return _lastPosition.compareTo(_linkedSpreadsheet.getEndPosition()) < 1;
 	}
 }

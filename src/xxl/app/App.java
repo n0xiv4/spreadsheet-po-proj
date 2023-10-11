@@ -14,7 +14,7 @@ public class App {
     try (var ui = Dialog.UI) {
       var receiver = new xxl.core.Calculator();
       // FIXME REMOVE AFTER TESTS!!!!
-      System.setProperty("import", "src/A-023-023-M-ok.import");
+      // System.setProperty("import", "src/xxl/core/test.txt");
       //
       String datafile = System.getProperty("import");
       if (datafile != null) {
