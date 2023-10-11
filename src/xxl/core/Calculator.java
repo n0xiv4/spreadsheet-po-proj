@@ -9,8 +9,6 @@ import java.io.FileOutputStream;
 
 import java.util.Map;
 
-import org.w3c.dom.ranges.Range;
-
 import java.util.HashMap;
 
 import xxl.app.exception.InvalidCellRangeException;
@@ -29,7 +27,7 @@ public class Calculator {
     private Spreadsheet _spreadsheet;
     
     /** The filename of the currently loaded or saved spreadsheet. */
-    private String _currentFile;
+    private String _currentFile = null;
 
     /** The active user who is currently using the calculator. */
     private User _activeUser;
@@ -59,8 +57,8 @@ public class Calculator {
 		_currentFile = filename;
 	}
 
-	public String getCurrentFile() {
-		return _currentFile;
+	public boolean hasFilename() {
+		return _currentFile != null;
 	}
 
 	/**

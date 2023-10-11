@@ -17,7 +17,8 @@ class DoShow extends Command<Spreadsheet> {
   
   @Override
   protected final void execute() throws CommandException {
+    // FIXME... when there's no cell like that!
     String gamma = stringField("gamma");
-    _receiver.visualizeGamma(gamma);
+    System.out.println(_receiver.visualizeGamma(gamma));
   }
 }

@@ -5,8 +5,8 @@ import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
 
 import xxl.core.Calculator;
+import xxl.core.exception.UnavailableFileException;
 import xxl.app.exception.FileOpenFailedException;
-// FIXME import classes
 
 /**
  * Open existing file.
@@ -15,15 +15,16 @@ class DoOpen extends Command<Calculator> {
 
   DoOpen(Calculator receiver) {
     super(Label.OPEN, receiver);
+    addStringField("filename", Message.openFile());
   }
   
   @Override
-  protected final void execute() throws CommandException {
-    /*
+  protected final void execute() throws FileOpenFailedException {
     try {
-      
-    } catch (UnavailableFileException e) {
+      _receiver.loadFile(stringField("filename"));
+    }
+    catch (UnavailableFileException e) {
       throw new FileOpenFailedException(e);
-    }*/
+    }
   }
 }

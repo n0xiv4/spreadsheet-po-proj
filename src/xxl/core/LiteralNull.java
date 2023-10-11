@@ -34,6 +34,7 @@ public class LiteralNull extends Literal {
      * @return A string representation of the null literal ("#VALUE").
      */
     public String toString() {
-        return "#VALUE";
+        // FIXME
+        return "";
     }
 }

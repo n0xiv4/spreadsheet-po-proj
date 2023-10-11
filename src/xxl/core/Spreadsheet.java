@@ -28,6 +28,9 @@ public class Spreadsheet implements Serializable {
 
 	/** The range of the Spreadsheet, represented as interval. */
 	private Interval _spreadsheetRange;
+
+	/** A boolean atribute that specifies if the spreadsheet has been changed already. */
+	private boolean _changed;
 	
 	/** The serial version UID for ensuring version compatibility during serialization. */
 	@Serial
@@ -103,7 +106,7 @@ public class Spreadsheet implements Serializable {
 		return findCellByPosition(cellPosition).getValue();
 	}
 
-	// FIXME temporary !!!!!!!!!!!!
+	// FIXME
 	String visualizeCellInPosition(Position cellPosition) {
 		return findCellByPosition(cellPosition).toString();
 	}
@@ -126,6 +129,10 @@ public class Spreadsheet implements Serializable {
 
 	public Position getEndPosition() {
 		return _spreadsheetRange.getLastPosition();
+	}
+
+	public boolean isChanged() {
+		return _changed;
 	}
 
 }

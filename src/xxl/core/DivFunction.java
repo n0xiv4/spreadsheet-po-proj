@@ -26,11 +26,6 @@ public class DivFunction extends BinaryFunction {
     protected Literal computeValue() {
         Literal arg0 = super._contents[0].getValue();
         Literal arg1 = super._contents[1].getValue();
-
-        if (arg1.getIntValue() == 0) {
-            throw new ArithmeticException("Division by zero is not allowed");
-        }
-
         return new LiteralInteger(arg0.getIntValue() / arg1.getIntValue());
     }
 }

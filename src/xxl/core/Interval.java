@@ -120,12 +120,18 @@ public class Interval implements Serializable {
 		// If the Interval happens in a certain row, we'll iterate thru the columns of that row.
 		if (onSameRow()) {
 			for (int col = _firstPosition.getColumn(); col <= _lastPosition.getColumn(); col++) {
+				if (col != _firstPosition.getColumn()) {
+					interval += "\n";
+				}
 				interval += _linkedSpreadsheet.visualizeCellInPosition(new Position(_firstPosition.getRow(), col));
 			}
 		}
 		// Else, the Interval will happen in a certain column, so we'll instead iterate thru the rows.
 		else {
 			for (int row = _firstPosition.getRow(); row <= _lastPosition.getRow(); row++) {
+				if (row != _firstPosition.getRow()) {
+					interval += "\n";
+				}
 				interval += _linkedSpreadsheet.visualizeCellInPosition(new Position(row, _firstPosition.getColumn()));
 			}
 		}
