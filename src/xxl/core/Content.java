@@ -11,23 +11,23 @@ import java.io.Serializable;
  * @Serial 202310081841L
  */
 public abstract class Content implements Serializable {
-    
-    /** The serial version UID for object serialization. */
-    @Serial
-    private static final long serialVersionUID = 202310081841L;
+	
+	/** The serial version UID for object serialization. */
+	@Serial
+	private static final long serialVersionUID = 202310081841L;
 
-    /**
-     * Retrieves the value of the content, which is specific to the content type.
-     *
-     * @return The value of the content as a {@link Literal}.
-     */
-    abstract Literal getValue();
-
-    /**
-     * Returns a string representation of the content.
-     *
-     * @return A string representation of the content.
-     */
-    abstract public String toString();
+	/**
+	 * Returns a string representation of the content.
+	 *
+	 * @return A string representation of the content.
+	 */
+	abstract public String toString();
+	
+	/**
+	 * Retrieves the value of the content, which is specific to the content type.
+	 *
+	 * @return The value of the content as a {@link Literal}.
+	 */
+	abstract Literal getValue();
 }
 

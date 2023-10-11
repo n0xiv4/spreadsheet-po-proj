@@ -6,25 +6,25 @@ package xxl.core;
  */
 public class AddFunction extends BinaryFunction {
 
-    /**
-     * Constructs a new {@code AddFunction} with two input contents for addition.
-     *
-     * @param arg1 The first content to be added.
-     * @param arg2 The second content to be added.
-     */
-    AddFunction(Content arg1, Content arg2) {
-        super(arg1, arg2, "ADD");
-    }
+	/**
+	 * Constructs a new {@code AddFunction} with two input contents for addition.
+	 *
+	 * @param arg1 The first content to be added.
+	 * @param arg2 The second content to be added.
+	 */
+	AddFunction(Content arg1, Content arg2) {
+		super(arg1, arg2, "ADD");
+	}
 
-    /**
-     * Computes the result of the addition operation and returns it as a {@link LiteralInteger}.
-     *
-     * @return The result of the addition operation as a {@link LiteralInteger}.
-     */
-    @Override
-    protected Literal computeValue() {
-        Literal arg1 = super._contents[0].getValue();
-        Literal arg2 = super._contents[1].getValue();
-        return new LiteralInteger(arg1.getIntValue() + arg2.getIntValue());
-    }
+	/**
+	 * Computes the result of the addition operation and returns it as a {@link LiteralInteger}.
+	 *
+	 * @return The result of the addition operation as a {@link LiteralInteger}.
+	 */
+	@Override
+	protected Literal computeValue() {
+		Literal arg1 = super._contents[0].getValue();
+		Literal arg2 = super._contents[1].getValue();
+		return new LiteralInteger(arg1.getIntValue() + arg2.getIntValue());
+	}
 }

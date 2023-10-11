@@ -1,7 +1,5 @@
 package xxl.core;
 
-// FIXME import classes
-
 import java.util.List;
 import java.util.ArrayList;
 
@@ -42,26 +40,12 @@ public class Spreadsheet implements Serializable {
 	 * @param rows    The number of rows in the spreadsheet.
 	 * @param columns The number of columns in the spreadsheet.
 	 */
-	public Spreadsheet(int rows, int columns) {
+	Spreadsheet(int rows, int columns) {
 		_users = new ArrayList<User>();
 		_cells = new ArrayList<Cell>();
 		_spreadsheetRange = new Interval(new Position(rows, columns), this);
 
 		populateSpreadsheet();
-	}
-
-	/**
-	 * Populates the {@link Spreadsheet} with cells based on the specified number of rows and columns.
-	 * Each cell is associated with a unique {@link Position}.
-	 */
-	private void populateSpreadsheet() {
-		int lastRow = _spreadsheetRange.getLastPosition().getRow();
-		int lastColumn = _spreadsheetRange.getLastPosition().getColumn();
-		for(int row = 1; row <= lastRow; row++) {
-			for(int column = 1; column <= lastColumn; column++) {
-				_cells.add(new Cell(row, column));
-			}
-		}
 	}
 
 	/**
@@ -74,6 +58,68 @@ public class Spreadsheet implements Serializable {
 	 */
 	public void insertContent(int row, int column, Content contentSpecification) throws UnrecognizedEntryException {
 		findCellByPosition(new Position(row, column)).setContent(contentSpecification);
+	}
+
+	/**
+	 * Visualizes the content of a spreadsheet range specified by a given gamma string.
+	 *
+	 * @param gamma The gamma string representing the spreadsheet range to visualize.
+	 * @return A string representation of the contents within the specified spreadsheet range.
+	 * @throws InvalidCellRangeException if the gamma string format is invalid.
+	 */
+	public String visualizeGamma(String gamma) throws InvalidCellRangeException {
+		Interval intervalToVisualize = new Interval(gamma, this);
+		return intervalToVisualize.readInterval();
+	}
+	
+	/**
+	 * Links a {@link User} to the spreadsheet.
+	 *
+	 * @param user The {@link User} to link with the spreadsheet.
+	 */
+	public void linkUser(User user) {
+		user.linkSpreadsheet(this);
+		_users.add(user);
+	}
+
+	/**
+	 * Returns the last position within the spreadsheet range.
+	 *
+	 * @return The {@link Position} of the last cell in the spreadsheet range.
+	 */
+	public Position getLastPosition() {
+		return _spreadsheetRange.getLastPosition();
+	}
+	
+	/**
+	 * Checks if the spreadsheet range has been changed.
+	 *
+	 * @return {@code true} if the spreadsheet range has been changed; {@code false} otherwise.
+	 */
+	public boolean isChanged() {
+		return _changed;
+	}
+
+	/**
+	 * Retrieves the value of a {@link Cell} at the specified {@link Position} within the spreadsheet.
+	 *
+	 * @param cellPosition The {@link Position} object representing the row and column coordinates
+	 *                     of the cell to retrieve the value from.
+	 * @return The value of the cell at the specified position, represented as a {@link Literal}.
+	 * @throws CellNotFoundException If no cell exists at the provided position in the spreadsheet.
+	 */
+	Literal getValueInPosition(Position cellPosition) {
+		return findCellByPosition(cellPosition).getValue();
+	}
+	
+	/**
+	 * Visualizes the {@link Content} of the {@link Cell} at the specified {@link Position}.
+	 *
+	 * @param cellPosition The position of the cell to visualize.
+	 * @return A string representation of the content in the cell at the given {@link Position}.
+	 */
+	String visualizeCellInPosition(Position cellPosition) {
+		return findCellByPosition(cellPosition).toString();
 	}
 
 	/**
@@ -94,45 +140,17 @@ public class Spreadsheet implements Serializable {
 	}
 
 	/**
-	 * Retrieves the value of a cell at the specified {@link Position} within the spreadsheet.
-	 *
-	 * @param cellPosition The {@link Position} object representing the row and column coordinates
-	 *                     of the cell to retrieve the value from.
-	 * @return The value of the cell at the specified position, represented as a {@link Literal}.
-	 * @throws CellNotFoundException If no cell exists at the provided position in the spreadsheet.
+	 * Populates the {@link Spreadsheet} with cells based on the specified number of rows and columns.
+	 * Each cell is associated with a unique {@link Position}.
 	 */
-	Literal getValueInPosition(Position cellPosition) {
-		// FIXME maybe add exception ?
-		return findCellByPosition(cellPosition).getValue();
+	private void populateSpreadsheet() {
+		int lastRow = _spreadsheetRange.getLastPosition().getRow();
+		int lastColumn = _spreadsheetRange.getLastPosition().getColumn();
+		for(int row = 1; row <= lastRow; row++) {
+			for(int column = 1; column <= lastColumn; column++) {
+				_cells.add(new Cell(row, column));
+			}
+		}
 	}
-
-	// FIXME
-	String visualizeCellInPosition(Position cellPosition) {
-		return findCellByPosition(cellPosition).toString();
-	}
-
-	// FIXME javadoc
-	public String visualizeGamma(String gamma) throws InvalidCellRangeException {
-		Interval intervalToVisualize = new Interval(gamma, this);
-		return intervalToVisualize.readInterval();
-	}
-
-	/**
-	 * Links a {@link User} to the spreadsheet.
-	 *
-	 * @param user The {@link User} to link with the spreadsheet.
-	 */
-	public void linkUser(User user) {
-		user.linkSpreadsheet(this);
-		_users.add(user);
-	}
-
-	public Position getEndPosition() {
-		return _spreadsheetRange.getLastPosition();
-	}
-
-	public boolean isChanged() {
-		return _changed;
-	}
-
+	
 }

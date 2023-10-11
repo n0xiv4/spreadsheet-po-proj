@@ -14,29 +14,28 @@ import java.io.IOException;
  */
 class DoNew extends Command<Calculator> {
 
-  DoNew(Calculator receiver) {
-    super(Label.NEW, receiver);
-    addBooleanField("saveBeforeExit?", Message.saveBeforeExit());
-    addIntegerField("rows", Message.lines());
-    addIntegerField("columns", Message.columns());
-  }
-  
-  @Override
-  protected final void execute() throws CommandException {
-    if (_receiver.getSpreadsheet() == null) {
-      if (booleanField("saveBeforeExit?")) {
-        try {
-          _receiver.saveFile();
-        }
-        catch (MissingFileAssociationException | IOException e) {
-          throw new FileOpenFailedException(e);
-        }
-      }
-
-    }
-    Integer rows = integerField("rows");
-    Integer columns = integerField("columns");
-    
-    _receiver.createSpreadsheet(rows, columns);
-  }
+	DoNew(Calculator receiver) {
+		super(Label.NEW, receiver);
+		addBooleanField("saveBeforeExit?", Message.saveBeforeExit());
+		addIntegerField("rows", Message.lines());
+		addIntegerField("columns", Message.columns());
+	}
+	
+	@Override
+	protected final void execute() throws CommandException {
+		if (_receiver.getSpreadsheet() != null) {
+			if (booleanField("saveBeforeExit?")) {
+				try {
+					_receiver.saveFile();
+				}
+				catch (MissingFileAssociationException | IOException e) {
+					throw new FileOpenFailedException(e);
+				}
+			}
+		}
+		Integer rows = integerField("rows");
+		Integer columns = integerField("columns");
+		
+		_receiver.createSpreadsheet(rows, columns);
+	}
 }

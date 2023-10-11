@@ -8,28 +8,28 @@ package xxl.core;
  */
 public abstract class Function extends Content {
 
-    /**
-     * Computes the result of the function and returns it as a {@link Literal}.
-     *
-     * @return The result of the function as a {@link Literal}.
-     */
-    protected abstract Literal computeValue();
+	/**
+	 * Retrieves the value of the function, which is calculated by invoking {@link #computeValue()}.
+	 *
+	 * @return The computed value of the function as a {@link Literal}.
+	 */
+	@Override
+	public Literal getValue() {
+		return computeValue();
+	}
 
-    /**
-     * Returns a string representation of the function.
-     *
-     * @return A string representation of the function.
-     */
-    public abstract String toString();
+	/**
+	 * Returns a string representation of the function.
+	 *
+	 * @return A string representation of the function.
+	 */
+	public abstract String toString();
 
-    /**
-     * Retrieves the value of the function, which is calculated by invoking {@link #computeValue()}.
-     *
-     * @return The computed value of the function as a {@link Literal}.
-     */
-    @Override
-    public Literal getValue() {
-        return computeValue();
-    }
+	/**
+	 * Computes the result of the function and returns it as a {@link Literal}.
+	 *
+	 * @return The result of the function as a {@link Literal}.
+	 */
+	protected abstract Literal computeValue();
 }
 

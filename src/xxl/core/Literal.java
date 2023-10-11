@@ -7,27 +7,27 @@ package xxl.core;
  */
 public abstract class Literal extends Content {
 
-    /**
-     * Retrieves the value of the literal as an integer.
-     *
-     * @return The integer value of the literal.
-     */
-    abstract public int getIntValue();
+	/**
+	 * Retrieves the value of the literal as an integer.
+	 *
+	 * @return The integer value of the literal.
+	 */
+	abstract public int getIntValue();
 
-    /**
-     * Retrieves the value of the literal as a string.
-     *
-     * @return The string representation of the literal.
-     */
-    abstract public String getStringValue();
+	/**
+	 * Retrieves the value of the literal as a string.
+	 *
+	 * @return The string representation of the literal.
+	 */
+	abstract public String getStringValue();
 
-    /**
-     * Returns the literal itself as its value.
-     *
-     * @return The literal object itself.
-     */
-    @Override
-    Literal getValue() {
-        return this;
-    }
+	/**
+	 * Returns the literal itself as its value.
+	 *
+	 * @return The literal object itself.
+	 */
+	@Override
+	Literal getValue() {
+		return this;
+	}
 }

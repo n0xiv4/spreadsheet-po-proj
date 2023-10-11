@@ -8,10 +8,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
 import java.util.Map;
-
 import java.util.HashMap;
 
-import xxl.app.exception.InvalidCellRangeException;
 import xxl.core.exception.ImportFileException;
 import xxl.core.exception.MissingFileAssociationException;
 import xxl.core.exception.UnavailableFileException;
@@ -23,17 +21,17 @@ import xxl.core.exception.UnrecognizedEntryException;
  */
 public class Calculator {
 
-    /** The current spreadsheet being edited. */
-    private Spreadsheet _spreadsheet;
-    
-    /** The filename of the currently loaded or saved spreadsheet. */
-    private String _currentFile = null;
+	/** The current spreadsheet being edited. */
+	private Spreadsheet _spreadsheet = null;
+	
+	/** The filename of the currently loaded or saved spreadsheet. */
+	private String _currentFile = null;
 
-    /** The active user who is currently using the calculator. */
-    private User _activeUser;
+	/** The active user who is currently using the calculator. */
+	private User _activeUser;
 
-    /** A collection of users registered in the calculator application. */
-    private Map<Integer, User> _users;
+	/** A collection of users registered in the calculator application. */
+	private Map<Integer, User> _users;
 
 	/**
 	 * Constructs a new {@code Calculator} object, initializing it with a default "root" user.
@@ -57,6 +55,11 @@ public class Calculator {
 		_currentFile = filename;
 	}
 
+	/**
+	 * Checks if a filename is associated with the current spreadsheet.
+	 *
+	 * @return {@code true} if a filename is associated with the current spreadsheet, {@code false} otherwise.
+	 */
 	public boolean hasFilename() {
 		return _currentFile != null;
 	}
@@ -78,11 +81,16 @@ public class Calculator {
 	 * @throws IOException if there is some error while serializing the state of the network to disk.
 	 */
 	public void saveFile() throws FileNotFoundException, MissingFileAssociationException, IOException {
-		FileOutputStream fileOut = new FileOutputStream(_currentFile);
-		ObjectOutputStream out = new ObjectOutputStream(fileOut);
-		out.writeObject(_spreadsheet);
-		out.close();
-		fileOut.close();
+		if (_currentFile == null) {
+			throw new MissingFileAssociationException();
+		}
+		else {
+			FileOutputStream fileOut = new FileOutputStream(_currentFile);
+			ObjectOutputStream out = new ObjectOutputStream(fileOut);
+			out.writeObject(_spreadsheet);
+			out.close();
+			fileOut.close();
+		}
 	}
 	
 	/**
@@ -140,6 +148,12 @@ public class Calculator {
 		}
 	} 
 
+	/**
+	 * Creates a new spreadsheet with the specified number of rows and columns and associates it with the active user.
+	 *
+	 * @param rows    The number of rows in the new spreadsheet.
+	 * @param columns The number of columns in the new spreadsheet.
+	 */
 	public void createSpreadsheet(int rows, int columns) {
 		_spreadsheet = new Spreadsheet(rows, columns);
 		_spreadsheet.linkUser(_activeUser);
@@ -174,5 +188,4 @@ public class Calculator {
 		}
 		return false;
 	}
-
 }

@@ -8,21 +8,26 @@ package xxl.core.exception;
  *    of Java.
  */
 public class UnavailableFileException extends Exception {
-  /** The requested filename. */
-  private String _filename;
-  
-  /**
-   * @param filename 
-   */
-  public UnavailableFileException(String filename) {
-    super("Erro a processar ficheiro " + filename);
-    _filename = filename;
-  }
-  
-  /**
-   * @return the requested filename
-   */
-  public String getFilename() {
-    return _filename;
-  } 
+
+	/** The requested filename. */
+	private String _filename;
+	
+	/**
+	 * Constructs a new UnavailableFileException with the specified filename.
+	 *
+	 * @param filename The filename that caused the exception.
+	 */
+	public UnavailableFileException(String filename) {
+		super("Erro a processar ficheiro " + filename);
+		_filename = filename;
+	}
+	
+	/**
+	 * Gets the filename that caused the exception.
+	 *
+	 * @return The requested filename.
+	 */
+	public String getFilename() {
+		return _filename;
+	} 
 }

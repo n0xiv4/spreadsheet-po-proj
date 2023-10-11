@@ -14,22 +14,22 @@ import java.io.IOException;
  */
 class DoSave extends Command<Calculator> {
 
-  DoSave(Calculator receiver) {
-    super(Label.SAVE, receiver, xxl -> xxl.getSpreadsheet() != null);
-  }
-  
-  @Override
-  protected final void execute() throws FileOpenFailedException {
-    try {
-      if (_receiver.hasFilename()) {
-        _receiver.saveFile();
-      }
-      else {
-        _receiver.saveFileAs(Form.requestString(Message.newSaveAs()));
-      }
-    }
-    catch (MissingFileAssociationException | IOException e) {
-      throw new FileOpenFailedException(e);
-    }
-  }
+	DoSave(Calculator receiver) {
+		super(Label.SAVE, receiver, xxl -> xxl.getSpreadsheet() != null);
+	}
+	
+	@Override
+	protected final void execute() throws FileOpenFailedException {
+		try {
+			if (_receiver.hasFilename()) {
+				_receiver.saveFile();
+			}
+			else {
+				_receiver.saveFileAs(Form.requestString(Message.newSaveAs()));
+			}
+		}
+		catch (MissingFileAssociationException | IOException e) {
+			throw new FileOpenFailedException(e);
+		}
+	}
 }

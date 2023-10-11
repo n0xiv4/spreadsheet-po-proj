@@ -7,26 +7,26 @@ package xxl.core;
  */
 public class MulFunction extends BinaryFunction {
 
-    /**
-     * Constructs a new {@code MulFunction} with the specified arguments.
-     *
-     * @param arg1 The first content argument to be multiplied.
-     * @param arg2 The second content argument to be multiplied.
-     */
-    MulFunction(Content arg1, Content arg2) {
-        super(arg1, arg2, "MUL");
-    }
+	/**
+	 * Constructs a new {@code MulFunction} with the specified arguments.
+	 *
+	 * @param arg1 The first content argument to be multiplied.
+	 * @param arg2 The second content argument to be multiplied.
+	 */
+	MulFunction(Content arg1, Content arg2) {
+		super(arg1, arg2, "MUL");
+	}
 
-    /**
-     * Calculates the result of multiplying the two content values represented by this function.
-     *
-     * @return A {@link LiteralInteger} representing the result of the multiplication.
-     */
-    @Override
-    protected Literal computeValue() {
-        Literal arg0 = super._contents[0].getValue();
-        Literal arg1 = super._contents[1].getValue();
-        return new LiteralInteger(arg0.getIntValue() * arg1.getIntValue());
-    }
+	/**
+	 * Calculates the result of multiplying the two content values represented by this function.
+	 *
+	 * @return A {@link LiteralInteger} representing the result of the multiplication.
+	 */
+	@Override
+	protected Literal computeValue() {
+		Literal arg0 = super._contents[0].getValue();
+		Literal arg1 = super._contents[1].getValue();
+		return new LiteralInteger(arg0.getIntValue() * arg1.getIntValue());
+	}
 }
 
