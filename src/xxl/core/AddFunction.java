@@ -1,5 +1,7 @@
 package xxl.core;
 
+import xxl.core.exception.InvalidValueTypeException;
+
 /**
  * The {@code AddFunction} class represents an addition operation in a spreadsheet.
  * It extends the {@link BinaryFunction} class and computes the sum of two content values.
@@ -25,6 +27,11 @@ public class AddFunction extends BinaryFunction {
 	protected Literal computeValue() {
 		Literal arg1 = super._contents[0].getValue();
 		Literal arg2 = super._contents[1].getValue();
-		return new LiteralInteger(arg1.getIntValue() + arg2.getIntValue());
+		try {
+			return new LiteralInteger(arg1.getIntValue() + arg2.getIntValue());
+		}
+		catch (InvalidValueTypeException e) {
+			return new LiteralString("#VALUE");
+		}
 	}
 }

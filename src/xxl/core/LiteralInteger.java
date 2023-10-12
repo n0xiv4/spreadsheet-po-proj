@@ -1,5 +1,7 @@
 package xxl.core;
 
+import xxl.core.exception.InvalidValueTypeException;
+
 /**
  * The {@code LiteralInteger} class represents an integer literal value in a spreadsheet.
  * It extends the {@link Literal} class and provides methods to retrieve the integer value,
@@ -32,11 +34,12 @@ public class LiteralInteger extends Literal {
 	/**
 	 * Retrieves the string representation of the integer value.
 	 *
-	 * @return The string representation of the integer.
+	 * @throws InvalidValueTypeException Because this literal is an integer one,
+	 * so no string value can be returned.
 	 */
 	@Override
-	public String getStringValue() {
-		return "";
+	public String getStringValue() throws InvalidValueTypeException {
+		throw new InvalidValueTypeException();
 	}
 
 	/**

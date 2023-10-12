@@ -1,5 +1,7 @@
 package xxl.core;
 
+import xxl.core.exception.InvalidValueTypeException;
+
 /**
  * The {@code MulFunction} class represents a multiplication function in a spreadsheet.
  * It extends the {@link BinaryFunction} class and provides methods to calculate the result
@@ -24,9 +26,14 @@ public class MulFunction extends BinaryFunction {
 	 */
 	@Override
 	protected Literal computeValue() {
-		Literal arg0 = super._contents[0].getValue();
-		Literal arg1 = super._contents[1].getValue();
-		return new LiteralInteger(arg0.getIntValue() * arg1.getIntValue());
+		Literal arg1 = super._contents[0].getValue();
+		Literal arg2 = super._contents[1].getValue();
+		try {
+			return new LiteralInteger(arg1.getIntValue() * arg2.getIntValue());
+		}
+		catch (InvalidValueTypeException e) {
+			return new LiteralString("#VALUE");
+		}
 	}
 }
 

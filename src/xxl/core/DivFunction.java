@@ -1,5 +1,7 @@
 package xxl.core;
 
+import xxl.core.exception.InvalidValueTypeException;
+
 /**
  * The {@code DivFunction} class represents a division operation in a spreadsheet.
  * It extends the {@link BinaryFunction} class and computes the result of dividing the first
@@ -24,12 +26,14 @@ public class DivFunction extends BinaryFunction {
 	 */
 	@Override
 	protected Literal computeValue() {
-		Literal arg0 = super._contents[0].getValue();
-		Literal arg1 = super._contents[1].getValue();
-		if (arg1.getIntValue() != 0) {
-			return new LiteralInteger(arg0.getIntValue() / arg1.getIntValue());
+		Literal arg1 = super._contents[0].getValue();
+		Literal arg2 = super._contents[1].getValue();
+		try {
+			return new LiteralInteger(arg1.getIntValue() / arg2.getIntValue());
 		}
-		return new LiteralString("#VALUE");
+		catch (InvalidValueTypeException | ArithmeticException e) {
+			return new LiteralString("#VALUE");
+		}
 	}
 }
 
