@@ -23,14 +23,12 @@ class DoNew extends Command<Calculator> {
 	
 	@Override
 	protected final void execute() throws CommandException {
-		if (_receiver.getSpreadsheet() != null) {
-			if (booleanField("saveBeforeExit?")) {
-				try {
-					_receiver.saveFile();
-				}
-				catch (MissingFileAssociationException | IOException e) {
-					throw new FileOpenFailedException(e);
-				}
+		if (_receiver.getSpreadsheet() != null && booleanField("saveBeforeExit?")) {
+			try {
+				_receiver.saveFile();
+			}
+			catch (MissingFileAssociationException | IOException e) {
+				throw new FileOpenFailedException(e);
 			}
 		}
 		Integer rows = integerField("rows");

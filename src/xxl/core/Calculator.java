@@ -22,10 +22,10 @@ import xxl.core.exception.UnrecognizedEntryException;
 public class Calculator {
 
 	/** The current spreadsheet being edited. */
-	private Spreadsheet _spreadsheet = null;
+	private Spreadsheet _spreadsheet;
 	
 	/** The filename of the currently loaded or saved spreadsheet. */
-	private String _currentFile = null;
+	private String _currentFile;
 
 	/** The active user who is currently using the calculator. */
 	private User _activeUser;

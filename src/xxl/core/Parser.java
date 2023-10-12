@@ -68,10 +68,10 @@ class Parser {
 		
 		for (int i = 0; i < 2; i++) {
 			String[] dimension = reader.readLine().split("=");
-			if (dimension[0].equals("linhas")) {
+			if ("linhas".equals(dimension[0])) {
 				rows = Integer.parseInt(dimension[1]);
 			}
-			else if (dimension[0].equals("colunas")) {
+			else if ("colunas".equals(dimension[0])) {
 				columns = Integer.parseInt(dimension[1]);
 			}
 			else {
@@ -143,7 +143,7 @@ class Parser {
 				return new LiteralInteger(val);
 			} 
 			catch (NumberFormatException nfe) {
-				throw new UnrecognizedEntryException("Número inválido: " + literalExpression);
+				throw new UnrecognizedEntryException("Número inválido: " + literalExpression, nfe);
 			}
 		}
 	}

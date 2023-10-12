@@ -51,7 +51,7 @@ public class Reference extends Content {
 	 * @return A string representation of the literal's value, or {@code #VALUE} if the value is an empty string.
 	 */
 	private String parseLiteralValue() {
-		if (getValue().toString().equals("")) {
+		if ("".equals(getValue().toString())) {
 			return "#VALUE";
 		}
 		return getValue().toString();
