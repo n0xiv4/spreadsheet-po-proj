@@ -69,7 +69,6 @@ public class Interval implements Serializable {
 		_firstPosition = intervalPositions[0];
 		_lastPosition = intervalPositions[1];
 		_linkedSpreadsheet = spreadsheet;
-		// FIXME
 		if (!isInsideSpreadsheet() || !Position.isCompatibleForInterval(_firstPosition, _lastPosition)) {
 			throw new InvalidCellRangeException(gamma);
 		}
