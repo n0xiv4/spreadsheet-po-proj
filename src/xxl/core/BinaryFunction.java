@@ -36,9 +36,9 @@ public abstract class BinaryFunction extends Function {
 	public String toString() {
 		String arg1 = parseArgument(_contents[0].toString());
 		String arg2 = parseArgument(_contents[1].toString());
-		return computeValue() + "=" + _functionName + "(" + arg1 + "," + arg2 + ")";
+		return parseStringFunctionValue(_contents) + "=" + _functionName + "(" + arg1 + "," + arg2 + ")";
 	}
-
+ 
 	/**
 	 * Parses an argument string to extract the wanted portion.
 	 * If the argument is a {@link Reference}, we'll be looking for the "row;column" portion.
@@ -53,5 +53,30 @@ public abstract class BinaryFunction extends Function {
 			return args[1];
 		}
 		return argument;
+	}
+
+	/**
+	 * Parses a string representation of a function value based on the provided arguments.
+	 * If either of the provided arguments is null, it returns "#VALUE". Otherwise, it
+	 * computes the value using the computeValue() method and returns its string representation.
+	 *
+	 * @param args An array of Content objects representing the function arguments.
+	 * @return The string representation of the computed function value or "#VALUE" if any argument is null.
+	 */
+	private String parseStringFunctionValue(Content[] args) {
+		if (isNullArgument(args[0]) || isNullArgument(args[1])) {
+			return "#VALUE";
+		}
+		return computeValue().toString();
+	}
+
+	/**
+	 * Checks if the provided Content object represents a null argument (LiteralNull).
+	 *
+	 * @param arg1 The Content object to be checked for nullness.
+	 * @return True if the argument is null, false otherwise.
+	 */
+	private boolean isNullArgument(Content arg1) {
+		return arg1.getValue().getStringValue() == null;
 	}
 }

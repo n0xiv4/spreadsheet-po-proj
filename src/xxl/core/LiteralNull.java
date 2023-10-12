@@ -24,7 +24,7 @@ public class LiteralNull extends Literal {
 	 */
 	@Override
 	public String getStringValue() {
-		return "";
+		return null;
 	}
 
 	/**
