@@ -3,7 +3,6 @@ package xxl.core;
 import java.io.Serial;
 import java.io.Serializable;
 
-import xxl.app.exception.InvalidCellRangeException;
 import xxl.core.exception.InvalidCellIntervalException;
 
 /**
@@ -63,7 +62,7 @@ public class Interval implements Serializable {
 	 *
 	 * @param gamma       The gamma range coordinates in string format (e.g., "1;1" for a single cell or "1;1:2;2" for an interval).
 	 * @param spreadsheet The {@link Spreadsheet} to which this interval is associated.
-	 * @throws InvalidCellRangeException if the provided gamma range is not a valid cell range.
+	 * @throws InvalidCellIntervalException if the provided gamma range does not make a valid Interval.
 	 */
 	Interval(String gamma, Spreadsheet spreadsheet) throws InvalidCellIntervalException {
 		Position[] intervalPositions = parsePositions(gamma);
@@ -137,9 +136,8 @@ public class Interval implements Serializable {
 	 *
 	 * @param gamma The gamma range coordinates in string format.
 	 * @return An array containing two {@link Position} objects representing the first and last positions.
-	 * @throws InvalidCellRangeException if the provided gamma range is not a valid cell range.
 	 */
-	private Position[] parsePositions(String gamma) throws InvalidCellRangeException {
+	private Position[] parsePositions(String gamma) {
 		String[] rangeCoordinates;
 		Position[] positions = new Position[2];
 		// In case it's an Interval

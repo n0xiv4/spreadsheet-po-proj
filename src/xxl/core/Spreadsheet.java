@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.io.Serial;
 import java.io.Serializable;
 
-import xxl.app.exception.InvalidCellRangeException;
 import xxl.core.exception.InvalidCellIntervalException;
 import xxl.core.exception.UnrecognizedEntryException;
 
@@ -66,16 +65,11 @@ public class Spreadsheet implements Serializable {
 	 *
 	 * @param gamma The gamma string representing the spreadsheet range to visualize.
 	 * @return A string representation of the contents within the specified spreadsheet range.
-	 * @throws InvalidCellRangeException if the gamma string format is invalid.
+	 * @throws InvalidCellIntervalException if the gamma string format is invalid.
 	 */
 	public String visualizeGamma(String gamma) throws InvalidCellIntervalException {
-		try {
-			Interval intervalToVisualize = new Interval(gamma, this);
-			return intervalToVisualize.readInterval();
-		}
-		catch(InvalidCellIntervalException e) {
-			throw new InvalidCellRangeException(gamma);
-		}
+		Interval intervalToVisualize = new Interval(gamma, this);
+		return intervalToVisualize.readInterval();
 	}
 	
 	/**
