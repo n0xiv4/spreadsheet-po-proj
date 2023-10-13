@@ -1,5 +1,7 @@
 package xxl.core;
 
+import xxl.core.exception.InvalidValueTypeException;
+
 /**
  * The {@code Reference} class represents a reference to a cell in a spreadsheet.
  * It extends the {@link Content} class and provides a way to access the value of a referenced cell.
@@ -32,7 +34,21 @@ public class Reference extends Content {
 	 */
 	@Override
 	public String toString() {
-		return parseLiteralValue() + "=" + _referencePosition.toString();
+		String referenceValue;
+		try {
+			referenceValue = Integer.toString(getValue().getIntValue());
+		} 
+		catch (InvalidValueTypeException e) {
+			// If we can't get an int value, we try to get a string one
+			try {
+				referenceValue = getValue().getStringValue();
+			}
+			// If we still can't get a string value, the value is "#VALUE"
+			catch (InvalidValueTypeException ivte) {
+				referenceValue = "#VALUE";
+			}
+		}
+		return referenceValue + "=" + _referencePosition.toString();
 	}
 
 	/**
@@ -42,18 +58,5 @@ public class Reference extends Content {
 	 */
 	Literal getValue() {
 		return _spreadsheet.getValueInPosition(_referencePosition);
-	}
-
-	/**
-	 * Parses the value of a literal to a string representation, considering the special case
-	 * where the value is a {@link LiteralNull}.
-	 *
-	 * @return A string representation of the literal's value, or {@code #VALUE} if the value is an empty string.
-	 */
-	private String parseLiteralValue() {
-		if ("".equals(getValue().toString())) {
-			return "#VALUE";
-		}
-		return getValue().toString();
 	}
 }
