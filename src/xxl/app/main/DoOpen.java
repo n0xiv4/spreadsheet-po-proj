@@ -1,5 +1,6 @@
 package xxl.app.main;
 
+import pt.tecnico.uilib.forms.Form;
 import pt.tecnico.uilib.menus.Command;
 
 import xxl.core.Calculator;
@@ -13,13 +14,12 @@ class DoOpen extends Command<Calculator> {
 
 	DoOpen(Calculator receiver) {
 		super(Label.OPEN, receiver);
-		addStringField("filename", Message.openFile());
 	}
 	
 	@Override
 	protected final void execute() throws FileOpenFailedException {
 		try {
-			_receiver.loadFile(stringField("filename"));
+			_receiver.loadFile(Form.requestString(Message.openFile()));
 		}
 		catch (UnavailableFileException e) {
 			throw new FileOpenFailedException(e);

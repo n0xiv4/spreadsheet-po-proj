@@ -38,23 +38,22 @@ public class Position implements Serializable, Comparable<Position> {
 	 * - They have the same row, and their columns are in ascending order.
 	 * - They have the same column, and their rows are in ascending order.
 	 *
-	 * @param firstPosition  The first {@link Position} to be compared.
-	 * @param secondPosition The second {@link Position} to be compared.
+	 * @param position The {@link Position} to be checked compatibility with.
 	 * @return {@code true} if the positions are compatible for defining an interval, {@code false} otherwise.
 	 */
-	public static boolean isCompatibleForInterval(Position firstPosition, Position secondPosition) {
+	public boolean isCompatibleForInterval(Position position) {
 		// Check if either position is not valid
-		if (!firstPosition.isValid() || !secondPosition.isValid()) {
+		if (!isValid() || !position.isValid()) {
 			return false;
 		}
 
 		// Check if rows are equal and columns are in ascending order
-		if (firstPosition.getRow() == secondPosition.getRow() && firstPosition.getColumn() <= secondPosition.getColumn()) {
+		if (getRow() == position.getRow() && getColumn() <= position.getColumn()) {
 			return true;
 		}
 
 		// Check if columns are equal and rows are in ascending order
-		if (firstPosition.getColumn() == secondPosition.getColumn() && firstPosition.getRow() <= secondPosition.getRow()) {
+		if (getColumn() == position.getColumn() && getRow() <= position.getRow()) {
 			return true;
 		}
 

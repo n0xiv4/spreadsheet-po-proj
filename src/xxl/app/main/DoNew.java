@@ -1,5 +1,6 @@
 package xxl.app.main;
 
+import pt.tecnico.uilib.forms.Form;
 import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
 
@@ -16,14 +17,11 @@ class DoNew extends Command<Calculator> {
 
 	DoNew(Calculator receiver) {
 		super(Label.NEW, receiver);
-		addBooleanField("saveBeforeExit?", Message.saveBeforeExit());
-		addIntegerField("rows", Message.lines());
-		addIntegerField("columns", Message.columns());
 	}
 	
 	@Override
 	protected final void execute() throws CommandException {
-		if (_receiver.getSpreadsheet() != null && booleanField("saveBeforeExit?")) {
+		if (_receiver.getSpreadsheet() != null && Form.confirm(Message.saveBeforeExit())) {
 			try {
 				_receiver.saveFile();
 			}
@@ -31,8 +29,8 @@ class DoNew extends Command<Calculator> {
 				throw new FileOpenFailedException(e);
 			}
 		}
-		Integer rows = integerField("rows");
-		Integer columns = integerField("columns");
+		Integer rows = Form.requestInteger(Message.lines());
+		Integer columns = Form.requestInteger(Message.columns());
 		
 		_receiver.createSpreadsheet(rows, columns);
 	}

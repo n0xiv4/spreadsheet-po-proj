@@ -1,5 +1,6 @@
 package xxl.app.edit;
 
+import pt.tecnico.uilib.forms.Form;
 import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
 
@@ -14,12 +15,11 @@ class DoShow extends Command<Spreadsheet> {
 
 	DoShow(Spreadsheet receiver) {
 		super(Label.SHOW, receiver);
-		addStringField("gamma", Message.address());
 	}
 	
 	@Override
 	protected final void execute() throws CommandException {
-		String gamma = stringField("gamma");
+		String gamma = Form.requestString(Message.address());
 		try {
 			_display.popup(_receiver.visualizeGamma(gamma));
 		}

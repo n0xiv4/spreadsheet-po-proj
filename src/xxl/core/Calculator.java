@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
 import java.util.Map;
@@ -76,20 +75,19 @@ public class Calculator {
 	/**
 	 * Saves the serialized application's state into the file associated to the current network.
 	 *
-	 * @throws FileNotFoundException if for some reason the file cannot be created or opened. 
 	 * @throws MissingFileAssociationException if the current network does not have a file.
 	 * @throws IOException if there is some error while serializing the state of the network to disk.
 	 */
-	public void saveFile() throws FileNotFoundException, MissingFileAssociationException, IOException {
+	public void saveFile() throws MissingFileAssociationException, IOException {
 		if (_currentFile == null) {
 			throw new MissingFileAssociationException();
 		}
 		else {
-			FileOutputStream fileOut = new FileOutputStream(_currentFile);
-			ObjectOutputStream out = new ObjectOutputStream(fileOut);
-			out.writeObject(_spreadsheet);
-			out.close();
-			fileOut.close();
+			try (FileOutputStream fileOut = new FileOutputStream(_currentFile);
+				ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
+				out.writeObject(_spreadsheet);
+			}
+			// Exceptions aren't handled here, so no catch needed
 		}
 	}
 	
@@ -98,11 +96,9 @@ public class Calculator {
 	 * associated to this file.
 	 *
 	 * @param filename the name of the file.
-	 * @throws FileNotFoundException if for some reason the file cannot be created or opened.
-	 * @throws MissingFileAssociationException if the current network does not have a file.
 	 * @throws IOException if there is some error while serializing the state of the network to disk.
 	 */
-	public void saveFileAs(String filename) throws FileNotFoundException, MissingFileAssociationException, IOException {
+	public void saveFileAs(String filename) throws IOException {
 		FileOutputStream fileOut = new FileOutputStream(filename);
 		ObjectOutputStream out = new ObjectOutputStream(fileOut);
 		out.writeObject(_spreadsheet);
@@ -117,13 +113,9 @@ public class Calculator {
 	 *         an error while processing this file.
 	 */
 	public void loadFile(String filename) throws UnavailableFileException {
-		try {
-			FileInputStream fileIn = new FileInputStream(filename);
-			ObjectInputStream in = new ObjectInputStream(fileIn);
+		try (FileInputStream fileIn = new FileInputStream(filename);
+			ObjectInputStream in = new ObjectInputStream(fileIn)) {
 			_spreadsheet = (Spreadsheet) in.readObject();
-			in.close();
-			fileIn.close();
-
 			setCurrentFile(filename);
 		}
 		catch (IOException | ClassNotFoundException e) {
