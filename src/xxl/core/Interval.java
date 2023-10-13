@@ -4,6 +4,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 import xxl.app.exception.InvalidCellRangeException;
+import xxl.core.exception.InvalidCellIntervalException;
 
 /**
  * The {@code Interval} class represents a rectangular interval or range of positions within a
@@ -64,13 +65,13 @@ public class Interval implements Serializable {
 	 * @param spreadsheet The {@link Spreadsheet} to which this interval is associated.
 	 * @throws InvalidCellRangeException if the provided gamma range is not a valid cell range.
 	 */
-	Interval(String gamma, Spreadsheet spreadsheet) throws InvalidCellRangeException {
+	Interval(String gamma, Spreadsheet spreadsheet) throws InvalidCellIntervalException {
 		Position[] intervalPositions = parsePositions(gamma);
 		_firstPosition = intervalPositions[0];
 		_lastPosition = intervalPositions[1];
 		_linkedSpreadsheet = spreadsheet;
 		if (!isInsideSpreadsheet() || !Position.isCompatibleForInterval(_firstPosition, _lastPosition)) {
-			throw new InvalidCellRangeException(gamma);
+			throw new InvalidCellIntervalException();
 		}
 	}
 
