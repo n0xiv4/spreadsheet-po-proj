@@ -2,6 +2,8 @@ package xxl.core;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
+import java.util.ArrayList;
 
 import xxl.core.exception.InvalidCellIntervalException;
 
@@ -102,6 +104,10 @@ public class Interval implements Serializable {
 		return interval;
 	}
 
+	public String toString() {
+		return _firstPosition.toString() + ":" + _lastPosition.toString();
+	}
+
 	/**
 	 * Checks if the interval is inside the spreadsheet's range.
 	 *
@@ -128,6 +134,22 @@ public class Interval implements Serializable {
 	 */
 	Position getLastPosition() {
 		return _lastPosition;
+	}
+
+	// FIXME javadoc
+	List<Content> getContent() {
+		List<Content> contents = new ArrayList<Content>();
+		if (onSameRow()) {
+			for (int col = _firstPosition.getColumn(); col <= _lastPosition.getColumn(); col++) {
+				contents.add(_linkedSpreadsheet.getValueInPosition(new Position(getFirstPosition().getRow(), col)));
+			}
+		}
+		else {
+			for (int row = _firstPosition.getRow(); row <= _lastPosition.getRow(); row++) {
+				contents.add(_linkedSpreadsheet.getValueInPosition(new Position(row, getFirstPosition().getColumn())));
+			}
+		}
+		return contents;
 	}
 
 	/**

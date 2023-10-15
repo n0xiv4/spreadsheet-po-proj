@@ -10,6 +10,9 @@ public class App {
 	public static void main(String[] args) {
 		try (var ui = Dialog.UI) {
 			var receiver = new xxl.core.Calculator();
+			// FIXME
+			System.setProperty("import", System.getProperty("user.dir") + "/src/xxl/core/teste.import");
+			//
 			String datafile = System.getProperty("import");
 			if (datafile != null) {
 				try {

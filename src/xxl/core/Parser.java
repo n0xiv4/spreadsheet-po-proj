@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.FileReader;
 import java.io.BufferedReader;
 
+import xxl.app.exception.UnknownFunctionException;
+import xxl.core.exception.InvalidCellIntervalException;
 import xxl.core.exception.UnrecognizedEntryException;
 
 /**
@@ -179,9 +181,7 @@ class Parser {
 		if (components[1].contains(",")) {
 			return parseBinaryFunction(components[0], components[1]);
 		}
-		throw new UnrecognizedEntryException(components[0]);
-		/* else, it's an interval function. these are not ready yet for the intermediate version */
-		// return parseIntervalFunction(components[0], components[1]);
+		return parseIntervalFunction(components[0], components[1]);
 	}
 
 	/**
@@ -223,18 +223,20 @@ class Parser {
 			return parseLiteral(argExpression);
 	}
 
-	/* Not needed yet for intermediate version of the project */
-	/*
-	private Content parseIntervalFunction(String functionName, String rangeDescription)
-		throws UnrecognizedEntryException , more exceptions ? {
-		Range range = _spreadsheet.buildRange(rangeDescription);
-		return switch (functionName) {
-			case "CONCAT" -> new Concat com range;
-			case "COALESCE" -> new Coalesce com range;
-			case "PRODUCT" -> new Product com range;
-			case "AVERAGE" -> new Average com range;
-			default -> throw new UnknownFunctionException(functionName);
-		};
+	// FIXME javadoc
+	private Content parseIntervalFunction(String functionName, String rangeDescription) throws UnrecognizedEntryException {
+		try {
+			Interval interval = new Interval(rangeDescription, _spreadsheet);
+			return switch (functionName) {
+				// case "CONCAT" -> new Concat com range;
+				// case "COALESCE" -> new Coalesce com range;
+				// case "PRODUCT" -> new Product com range;
+				case "AVERAGE" -> new AverageFunction(interval);
+				default -> throw new UnknownFunctionException(functionName);
+			};
+		}
+		catch (InvalidCellIntervalException | UnknownFunctionException e) {
+			throw new UnrecognizedEntryException(functionName);
+		}
 	}
-	*/
 }
