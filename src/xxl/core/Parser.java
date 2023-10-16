@@ -228,9 +228,9 @@ class Parser {
 		try {
 			Interval interval = new Interval(rangeDescription, _spreadsheet);
 			return switch (functionName) {
-				// case "CONCAT" -> new Concat com range;
-				// case "COALESCE" -> new Coalesce com range;
-				// case "PRODUCT" -> new Product com range;
+				case "CONCAT" -> new ConcatFunction(interval);
+				case "COALESCE" -> new CoalesceFunction(interval);
+				case "PRODUCT" -> new ProductFunction(interval);
 				case "AVERAGE" -> new AverageFunction(interval);
 				default -> throw new UnknownFunctionException(functionName);
 			};
