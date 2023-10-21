@@ -7,8 +7,8 @@ import xxl.core.exception.InvalidValueTypeException;
  * It extends the {@link Literal} class and provides methods to retrieve default values for numeric
  * and string representations of a null literal.
  */
-public class LiteralNull extends Literal {
-	
+public abstract class LiteralNull extends Literal {
+
 	/**
 	 * Returns the default integer value for a null literal, which is 0.
 	 *
@@ -29,14 +29,5 @@ public class LiteralNull extends Literal {
 	@Override
 	public String getStringValue() throws InvalidValueTypeException {
 		throw new InvalidValueTypeException();
-	}
-
-	/**
-	 * Returns a String (empty) representation of a null literal.
-	 *
-	 * @return An empty string.
-	 */
-	public String toString() {
-		return "";
 	}
 }

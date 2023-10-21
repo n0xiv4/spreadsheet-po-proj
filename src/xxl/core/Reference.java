@@ -51,6 +51,12 @@ public class Reference extends Content {
 		return referenceValue + "=" + _referencePosition.toString();
 	}
 
+	// FIXME
+	@Override
+	public String getType() {
+		return "REFERENCE";
+	}
+
 	/**
 	 * Retrieves the value of the referenced cell from the associated spreadsheet.
 	 *

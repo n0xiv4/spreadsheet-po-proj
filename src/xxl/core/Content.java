@@ -22,6 +22,13 @@ public abstract class Content implements Serializable {
 	 * @return A string representation of the content.
 	 */
 	abstract public String toString();
+
+	/**
+     * Retrieves the type of the content.
+     *
+     * @return The type of the content as a string.
+     */
+	abstract public String getType();
 	
 	/**
 	 * Retrieves the value of the content, which is specific to the content type.

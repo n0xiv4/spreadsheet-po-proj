@@ -8,6 +8,33 @@ package xxl.core;
  */
 public abstract class Function extends Content {
 
+	/** The name of the function. */
+	private final String _functionName;
+
+	/**
+	 * Constructs a new instance of the {@code Function} class with the specified function name.
+	 *
+	 * @param functionName The name of the function.
+	 */
+	Function(String functionName) {
+		_functionName = functionName;
+	}
+
+	/**
+	 * Retrieves the name of the function.
+	 *
+	 * @return The name of the function.
+	 */
+	public String getFunctionName() {
+		return _functionName;
+	}
+
+	// FIXME javadoc
+	@Override
+	public String getType() {
+		return _functionName;
+	}
+
 	/**
 	 * Retrieves the value of the function, which is calculated by invoking {@link #computeValue()}.
 	 *

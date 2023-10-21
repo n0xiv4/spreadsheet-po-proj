@@ -1,5 +1,6 @@
 package xxl.core;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -7,6 +8,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 import xxl.core.exception.InvalidCellIntervalException;
+import xxl.core.exception.InvalidValueTypeException;
 import xxl.core.exception.UnrecognizedEntryException;
 
 /**
@@ -29,6 +31,9 @@ public class Spreadsheet implements Serializable {
 
 	/** A boolean atribute that specifies if the spreadsheet has been changed already. */
 	private boolean _changed;
+
+	/** A cutbuffer atribute that holds the current clipboard of cells. */
+	private CutBuffer _cutBuffer;
 	
 	/** The serial version UID for ensuring version compatibility during serialization. */
 	@Serial
@@ -60,6 +65,11 @@ public class Spreadsheet implements Serializable {
 		findCellByPosition(new Position(row, column)).setContent(contentSpecification);
 	}
 
+	public void copyGamma(String gamma) {
+		Interval intervalToCopy;
+		// FIXME
+	}
+
 	/**
 	 * Visualizes the content of a spreadsheet range specified by a given gamma string.
 	 *
@@ -70,6 +80,43 @@ public class Spreadsheet implements Serializable {
 	public String visualizeGamma(String gamma) throws InvalidCellIntervalException {
 		Interval intervalToVisualize = new Interval(gamma, this);
 		return intervalToVisualize.readInterval();
+	}
+
+	/**
+	 * Visualizes cells that match the given value and returns them as a string.
+	 *
+	 * @param value The value to search for. If it starts with a single quote, it's treated as a String; otherwise, it's treated as an Integer.
+	 * @return A string containing the visual representation of matching cells, with the last newline character removed.
+	 */
+	public String visualizeValue(String value) {
+		/** A mutable version of a "String", so we can remove the last newline char. */
+		StringBuilder display = new StringBuilder();
+
+		if (value.charAt(0) == '\'') {
+			String strValue = value.substring(1);
+			display.append(findCellsByStringValue(strValue));
+		} 
+		else {
+			int intValue = Integer.parseInt(value);
+			display.append(findCellsByIntValue(intValue));
+		}
+		if (display.length() > 0) {
+			display.deleteCharAt(display.length() - 1); 
+		}
+
+		return display.toString();
+	}
+
+	/**
+	 * Visualizes cells containing a specified function by filtering and sorting them.
+	 *
+	 * @param function The function to search for.
+	 * @return A string representing the sorted cells.
+	 */
+	public String visualizeFunction(String function) {
+		List<Cell> foundCells = filterCellsByFunction(function);
+		sortCellsByContentType(foundCells);
+		return displaySortedCells(foundCells);
 	}
 	
 	/**
@@ -89,6 +136,11 @@ public class Spreadsheet implements Serializable {
 	 */
 	public Position getLastPosition() {
 		return _spreadsheetRange.getLastPosition();
+	}
+
+	// FIXME
+	public List<Cell> getCutBuffer() {
+		return _cutBuffer.getCells();
 	}
 	
 	/**
@@ -140,7 +192,7 @@ public class Spreadsheet implements Serializable {
 	}
 
 	/**
-	 * Populates the {@link Spreadsheet} with cells based on the specified number of rows and columns.
+	 * Populates the {@code Spreadsheet} with cells based on the specified number of rows and columns.
 	 * Each cell is associated with a unique {@link Position}.
 	 */
 	private void populateSpreadsheet() {
@@ -151,6 +203,93 @@ public class Spreadsheet implements Serializable {
 				_cells.add(new Cell(row, column));
 			}
 		}
+	}
+
+	/**
+	 * Finds cells with String values that match the provided value and returns them as a string.
+	 *
+	 * @param strValue The String value to search for in the cells.
+	 * @return A string containing the visual representation of cells with matching String values.
+	 */
+	private String findCellsByStringValue(String strValue) {
+		StringBuilder display = new StringBuilder();
+
+		for (Cell cell : _cells) {
+			try {
+				if (cell.getValue().getStringValue().equals(strValue)) {
+					display.append(cell.toString()).append("\n");
+				}
+			} 
+			catch (InvalidValueTypeException e) {
+			}
+		}
+
+		return display.toString();
+	}
+	
+	
+	/**
+	 * Finds cells with Integer values that match the provided value and returns them as a string.
+	 *
+	 * @param intValue The Integer value to search for in the cells.
+	 * @return A string containing the visual representation of cells with matching Integer values.
+	 */
+	private String findCellsByIntValue(int intValue) {
+		StringBuilder display = new StringBuilder();
+	
+		for (Cell cell : _cells) {
+			try {
+				if (cell.getValue().getIntValue() == intValue) {
+					display.append(cell.toString()).append("\n");
+				}
+			} 
+			catch (InvalidValueTypeException e) {
+			}
+		}
+	
+		return display.toString();
+	}
+
+	/**
+	 * Filters cells that contain the specified function.
+	 *
+	 * @param function The function to search for.
+	 * @return A list of filtered cells.
+	 */
+	private List<Cell> filterCellsByFunction(String function) {
+		List<Cell> foundCells = new ArrayList<>();
+		for (Cell cell : _cells) {
+			if (cell.getContentType().contains(function)) {
+				foundCells.add(cell);
+			}
+		}
+		return foundCells;
+	}
+
+	/**
+	 * Sorts a list of cells by content type using a custom comparator.
+	 *
+	 * @param cells The list of cells to sort.
+	 */
+	private void sortCellsByContentType(List<Cell> cells) {
+		Collections.sort(cells, new ContentSort());
+	}
+
+	/**
+	 * Converts a list of cells into a string and removes the last newline character if the list is not empty.
+	 *
+	 * @param cells The list of cells to display.
+	 * @return A string representing the sorted cells.
+	 */
+	private String displaySortedCells(List<Cell> cells) {
+		StringBuilder display = new StringBuilder();
+		for (Cell sCell : cells) {
+			display.append(sCell).append("\n");
+		}
+		if (display.length() > 0) {
+			display.deleteCharAt(display.length() - 1);
+		}
+		return display.toString();
 	}
 	
 }

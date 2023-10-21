@@ -12,13 +12,13 @@ public class CoalesceFunction extends IntervalFunction{
 	@Override
 	protected Literal computeValue() {
 		List<Content> intervalContents = _interval.getContent();
-			for (Content content: intervalContents) {
-				try {
-					return new LiteralString(content.getValue().getStringValue());
-				}
-				catch (InvalidValueTypeException ivte) {
-				}
+		for (Content content: intervalContents) {
+			try {
+				return new LiteralString(content.getValue().getStringValue());
 			}
-			return new LiteralString("");
+			catch (InvalidValueTypeException e) {
+			}
+		}
+		return new LiteralString("");
 	}
 }

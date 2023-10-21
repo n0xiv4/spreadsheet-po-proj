@@ -19,8 +19,8 @@ public class ProductFunction extends IntervalFunction{
 			}
 			return new LiteralInteger(product);
 		}
-		catch (InvalidValueTypeException ivte) {
-			return new LiteralString("#VALUE");
+		catch (InvalidValueTypeException e) {
+			return new LiteralNullFunction();
 		}
 	}
 }

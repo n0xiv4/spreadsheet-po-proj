@@ -21,7 +21,7 @@ public class AverageFunction extends IntervalFunction {
 			return new LiteralInteger(sum / intervalContents.size());
 		}
 		catch (InvalidValueTypeException ivte) {
-			return new LiteralString("#VALUE");
+			return new LiteralNullFunction();
 		}
 	}
 }

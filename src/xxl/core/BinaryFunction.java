@@ -10,9 +10,6 @@ public abstract class BinaryFunction extends Function {
 	/** The array to store the two input contents for the binary operation. */
 	protected Content[] _contents;
 
-	/** The name of the binary function. */
-	private final String _functionName;
-
 	/**
 	 * Constructs a new {@code BinaryFunction} with two input contents and a specified function name.
 	 *
@@ -21,10 +18,10 @@ public abstract class BinaryFunction extends Function {
 	 * @param functionName The name of the binary function.
 	 */
 	BinaryFunction(Content arg1, Content arg2, String functionName) {
+		super(functionName);
 		_contents = new Content[2];
 		_contents[0] = arg1;
 		_contents[1] = arg2;
-		_functionName = functionName;
 	}
 
 	/**
@@ -36,7 +33,7 @@ public abstract class BinaryFunction extends Function {
 	public String toString() {
 		String arg1 = parseArgument(_contents[0].toString());
 		String arg2 = parseArgument(_contents[1].toString());
-		return getValue() + "=" + _functionName + "(" + arg1 + "," + arg2 + ")";
+		return getValue() + "=" + getFunctionName() + "(" + arg1 + "," + arg2 + ")";
 	}
  
 	/**

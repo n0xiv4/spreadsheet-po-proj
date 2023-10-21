@@ -4,7 +4,7 @@ import java.util.List;
 
 import xxl.core.exception.InvalidValueTypeException;
 
-public class ConcatFunction extends IntervalFunction{
+public class ConcatFunction extends IntervalFunction {
     ConcatFunction(Interval arg) {
 		super(arg, "CONCAT");
 	}
@@ -16,9 +16,9 @@ public class ConcatFunction extends IntervalFunction{
         for (Content content: intervalContents) {
             try {
                 //FIXME
-                concatStrings += content.getValue().getStringValue().split("'")[1];
+                concatStrings += content.getValue().getStringValue();
             }
-            catch (InvalidValueTypeException ivte) {
+            catch (InvalidValueTypeException e) {
             }
         }
         return new LiteralString(concatStrings);

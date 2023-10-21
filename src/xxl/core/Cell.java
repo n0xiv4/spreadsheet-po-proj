@@ -31,7 +31,7 @@ public class Cell implements Serializable {
 	 */
 	Cell(int row, int column) {
 		_position = new Position(row, column);
-		_content = new LiteralNull();
+		_content = new LiteralNullValue();
 	}
 
 	/**
@@ -42,7 +42,7 @@ public class Cell implements Serializable {
 	 */
 	Cell(Position position) {
 		_position = position;
-		_content = new LiteralNull();
+		_content = new LiteralNullValue();
 	}
 
 	/**
@@ -70,6 +70,11 @@ public class Cell implements Serializable {
 	 */
 	void setContent(Content content) {
 		_content = content;
+	}
+
+	// FIXME
+	String getContentType() {
+		return _content.getType();
 	}
 
 	/**

@@ -32,7 +32,7 @@ public class MulFunction extends BinaryFunction {
 			return new LiteralInteger(arg1.getIntValue() * arg2.getIntValue());
 		}
 		catch (InvalidValueTypeException e) {
-			return new LiteralString("#VALUE");
+			return new LiteralNullFunction();
 		}
 	}
 }

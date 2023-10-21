@@ -138,7 +138,8 @@ class Parser {
 	 */
 	private Literal parseLiteral(String literalExpression) throws UnrecognizedEntryException {
 		if (literalExpression.charAt(0) == '\'')
-			return new LiteralString(literalExpression);
+			// removes the quote
+			return new LiteralString(literalExpression.substring(1));
 		else {
 			try {
 				int val = Integer.parseInt(literalExpression);
