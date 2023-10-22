@@ -77,7 +77,12 @@ public class Interval implements Serializable {
 		}
 	}
 
-	// FIXME javadoc - creates an interval for the cutbuffer
+	/**
+	 * Creates an interval for the cut buffer by copying content from another interval.
+	 * This constructor is used to duplicate an existing interval and its contents.
+	 *
+	 * @param toCopy The interval to copy content from.
+	 */
 	Interval(Interval toCopy) {
 		int newSheetRows = calculateNewSheetRows(toCopy);
 		int newSheetColumns = calculateNewSheetColumns(toCopy);
@@ -127,8 +132,8 @@ public class Interval implements Serializable {
 	 * @return {@code true} if the last position is inside the spreadsheet's range; {@code false} otherwise.
 	 */
 	public boolean isInsideSpreadsheet() {
-		// If compareTo = 1, lastPosition is OUT of the spreadsheet range.
-		return _lastPosition.compareTo(_linkedSpreadsheet.getLastPosition()) < 1;
+		return (_lastPosition.getRow() <= _linkedSpreadsheet.getLastPosition().getRow() 
+		&& _lastPosition.getColumn() <= _linkedSpreadsheet.getLastPosition().getColumn());
 	}
 
 	/**
@@ -199,19 +204,32 @@ public class Interval implements Serializable {
 	}
 
 	// FIXME
-	void pasteContent(List<Content> contents) {
+	void pasteContent(List<Cell> cells) {
 		List<Position> positions = getPositions();
 		int index = 0;		
-		for (Content content: contents) {
+		for (Cell cell: cells) {
 			Position currPosition = positions.get(index);
 			try {
-				_linkedSpreadsheet.insertContent(currPosition.getRow(), currPosition.getColumn(), content);
-			} 
+				_linkedSpreadsheet.insertContent(currPosition.getRow(), currPosition.getColumn(), cell.getContent());
+			}
 			catch (UnrecognizedEntryException e) {
 				// Won't happen - this exception would already have been handled by the program in importFile
 			}
+			catch (NullPointerException e) {
+				// Will happen if our position is out of bounds. That's no issue - we'll just ignore that insertContent
+			}
 			index++;
 		}
+	}
+
+	// FIXME
+	boolean isSingle() {
+		return (_firstPosition.getRow() == _lastPosition.getRow()) 
+				&& (_firstPosition.getColumn() == _lastPosition.getColumn());
+	}
+
+	void addFunctionToCells(IntervalFunction function) {
+		_linkedSpreadsheet.addFunctionToInterval(this, function);
 	}
 
 	/**
@@ -221,20 +239,26 @@ public class Interval implements Serializable {
 	 * @param gamma The gamma range coordinates in string format.
 	 * @return An array containing two {@link Position} objects representing the first and last positions.
 	 */
-	private Position[] parsePositions(String gamma) {
+	private Position[] parsePositions(String gamma) throws InvalidCellIntervalException {
 		String[] rangeCoordinates;
 		Position[] positions = new Position[2];
 		// In case it's an Interval
-		if (gamma.indexOf(':') != -1) {
-			rangeCoordinates = gamma.split("[:;]");
-			positions[0] = new Position(Integer.parseInt(rangeCoordinates[0]), Integer.parseInt(rangeCoordinates[1]));
-			positions[1] = new Position(Integer.parseInt(rangeCoordinates[2]), Integer.parseInt(rangeCoordinates[3]));
-		} 
-		// In case it's a sole Cell
-		else {
-			rangeCoordinates = gamma.split(";");
-			positions[0] = new Position(Integer.parseInt(rangeCoordinates[0]), Integer.parseInt(rangeCoordinates[1]));
-			positions[1] = positions[0];
+		try {
+			if (gamma.indexOf(':') != -1) {
+				rangeCoordinates = gamma.split("[:;]");
+				positions[0] = new Position(Integer.parseInt(rangeCoordinates[0]), Integer.parseInt(rangeCoordinates[1]));
+				positions[1] = new Position(Integer.parseInt(rangeCoordinates[2]), Integer.parseInt(rangeCoordinates[3]));
+			} 
+			// In case it's a sole Cell
+			else {
+				rangeCoordinates = gamma.split(";");
+				positions[0] = new Position(Integer.parseInt(rangeCoordinates[0]), Integer.parseInt(rangeCoordinates[1]));
+				positions[1] = positions[0];
+			}
+		}
+		catch (ArrayIndexOutOfBoundsException e) {
+			// FIXME
+			throw new InvalidCellIntervalException();
 		}
 		return positions;
 	}

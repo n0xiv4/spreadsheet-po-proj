@@ -33,7 +33,12 @@ public abstract class BinaryFunction extends Function {
 	public String toString() {
 		String arg1 = parseArgument(_contents[0].toString());
 		String arg2 = parseArgument(_contents[1].toString());
-		return getValue() + "=" + getFunctionName() + "(" + arg1 + "," + arg2 + ")";
+		return getValue() + "=" + getType() + "(" + arg1 + "," + arg2 + ")";
+	}
+
+	@Override
+	public Literal getValue() {
+		return computeValue();
 	}
  
 	/**

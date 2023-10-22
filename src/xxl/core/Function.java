@@ -20,29 +20,10 @@ public abstract class Function extends Content {
 		_functionName = functionName;
 	}
 
-	/**
-	 * Retrieves the name of the function.
-	 *
-	 * @return The name of the function.
-	 */
-	public String getFunctionName() {
-		return _functionName;
-	}
-
 	// FIXME javadoc
 	@Override
 	public String getType() {
 		return _functionName;
-	}
-
-	/**
-	 * Retrieves the value of the function, which is calculated by invoking {@link #computeValue()}.
-	 *
-	 * @return The computed value of the function as a {@link Literal}.
-	 */
-	@Override
-	public Literal getValue() {
-		return computeValue();
 	}
 
 	/**

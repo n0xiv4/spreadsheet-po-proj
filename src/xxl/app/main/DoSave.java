@@ -20,7 +20,7 @@ class DoSave extends Command<Calculator> {
 	
 	@Override
 	protected final void execute() throws FileOpenFailedException {
-		if (_receiver.isCurrentSpreadsheetChanged()) {
+		if (_receiver.getSpreadsheet() != null && _receiver.isCurrentSpreadsheetChanged()) {
 			try {
 				if (_receiver.hasFilename()) {
 					_receiver.saveFile();

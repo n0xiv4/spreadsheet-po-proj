@@ -69,6 +69,44 @@ public class Spreadsheet implements Serializable {
 	}
 
 	// FIXME
+	/**
+	 * Inserts the content of the given list of cells into the specified initial position.
+	 * This happens when the user input Interval has a single position only.
+	 *
+	 * @param initialPosition The initial position where the content will be inserted.
+	 * @param cells The list of cells to insert.
+	 */
+	private void insertContentInPosition(Position initialPosition, List<Cell> cells) {
+		Position firstCellPosition = cells.get(0).getPosition();
+		Position lastCellPosition = cells.get(cells.size() - 1).getPosition();
+		
+		int rowDifference = lastCellPosition.getRow() - firstCellPosition.getRow();
+		int colDifference = lastCellPosition.getColumn() - firstCellPosition.getColumn();
+		
+		Position finalPosition;
+		
+		// If the cutBuffer is on the same row
+		if (firstCellPosition.getRow() == lastCellPosition.getRow()) {
+			finalPosition = new Position(
+				initialPosition.getRow() + rowDifference,
+				initialPosition.getColumn() + colDifference
+			);
+		}
+		// If the cutBuffer is on the same column
+		else {
+			finalPosition = new Position(
+				initialPosition.getRow() + rowDifference,
+				initialPosition.getColumn() + rowDifference
+			);
+		}
+		
+		Interval toPaste = new Interval(initialPosition, finalPosition, this);
+		toPaste.pasteContent(cells);
+	}
+
+	
+
+	// FIXME
 	public void cutGamma(String gamma) throws InvalidCellIntervalException {
 		copyGamma(gamma);
 		deleteGamma(gamma);
@@ -83,8 +121,12 @@ public class Spreadsheet implements Serializable {
 	// FIXME
 	public void pasteGamma(String gamma) throws InvalidCellIntervalException {
 		Interval intervalToPaste = new Interval(gamma, this);
-		List<Content> contentToPaste = convertCellListToContentList(_cutBuffer.getCells());
-		intervalToPaste.pasteContent(contentToPaste);
+		if (_cutBuffer.getCells().size() > 1 && intervalToPaste.isSingle()) {
+			insertContentInPosition(intervalToPaste.getFirstPosition(), _cutBuffer.getCells());
+		}
+		else {
+			intervalToPaste.pasteContent(_cutBuffer.getCells());
+		}
 	}
 
 	// FIXME
@@ -236,6 +278,12 @@ public class Spreadsheet implements Serializable {
 		return getCellInPosition(cellPosition).toString();
 	}
 
+	void addFunctionToInterval(Interval interval, IntervalFunction function) {
+		for (Cell cell: getCellsFromInterval(interval)) {
+			cell.getFunctionManager().addFunction(function);
+		}
+	}
+
 	/**
 	 * Finds and returns a {@link Cell} within a collection of cells based on its position.
 	 * It's a private method so no Cells are returned (could result in a privacy leak, because
@@ -363,7 +411,7 @@ public class Spreadsheet implements Serializable {
 	}
 
 	// FIXME
-	private List<Content> convertCellListToContentList(List<Cell> cells) {
+	 List<Content> convertCellListToContentList(List<Cell> cells) {
 		// for each Cell in the list, we get its content
 		return cells.stream().map(cell -> cell.getContent()).collect(Collectors.toList());
 	}

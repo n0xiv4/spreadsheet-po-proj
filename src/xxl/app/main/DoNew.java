@@ -21,13 +21,8 @@ class DoNew extends Command<Calculator> {
 	
 	@Override
 	protected final void execute() throws CommandException {
-		if (_receiver.isCurrentSpreadsheetChanged() && Form.confirm(Message.saveBeforeExit())) {
-			try {
-				_receiver.saveFile();
-			}
-			catch (MissingFileAssociationException | IOException e) {
-				throw new FileOpenFailedException(e);
-			}
+		if (_receiver.getSpreadsheet() != null && _receiver.isCurrentSpreadsheetChanged() && Form.confirm(Message.saveBeforeExit())) {
+			new DoSave(_receiver).execute();
 		}
 		Integer rows = Form.requestInteger(Message.lines());
 		Integer columns = Form.requestInteger(Message.columns());

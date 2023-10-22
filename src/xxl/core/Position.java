@@ -9,7 +9,7 @@ import java.io.Serializable;
  * 
  * @Serial 202310112120L
  */
-public class Position implements Serializable, Comparable<Position> {
+public class Position implements Serializable {
 	
 	/** The row coordinate. */
 	private int _row;
@@ -80,7 +80,11 @@ public class Position implements Serializable, Comparable<Position> {
 	 * @return A negative integer if this position is before the specified position, a positive integer if it's after,
 	 *         or 0 if the positions are the same.
 	 */
+	/*
 	public int compareTo(Position position) {
+		if (_row > position._row) {
+
+		}
 		if (_row < position._row) {
 			// A is before B in terms of rows
 			return -1;
@@ -105,6 +109,7 @@ public class Position implements Serializable, Comparable<Position> {
 			}
 		}
 	}
+	*/
 
 	/**
 	 * Gets the row value of this {@link Position}.

@@ -4,10 +4,13 @@ package xxl.core;
  * The {@code IntervalFunction} class represents an abstract function in a spreadsheet that operates on an interval.
  * It extends the {@link Function} class and adds the concept of an interval to the function.
  */
-public abstract class IntervalFunction extends Function {
+public abstract class IntervalFunction extends Function implements Listener {
 
 	/** The interval that belongs to the function. */
 	protected Interval _interval;
+
+	/** The current value of the function. Will be recomputed when updated. */
+	private Literal _value;
 
 	/**
      * Constructs a new instance of the IntervalFunction class with the specified interval and function name.
@@ -18,6 +21,20 @@ public abstract class IntervalFunction extends Function {
 	IntervalFunction(Interval arg, String functionName) {
 		super(functionName);
 		_interval = arg;
+		_interval.addFunctionToCells(this);
+		_value = computeValue();
+	}
+
+	// FIXME
+	@Override
+	public Literal getValue() {
+		return _value;
+	}
+
+	// FIXME
+	@Override 
+	public void update() {
+		_value = computeValue();
 	}
 
 	/**
@@ -27,6 +44,6 @@ public abstract class IntervalFunction extends Function {
      */
 	@Override
 	public String toString() {
-		return getValue() + "=" + getFunctionName() + "(" + _interval + ")";
+		return getValue() + "=" + getType() + "(" + _interval + ")";
 	}
 }

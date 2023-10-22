@@ -18,6 +18,9 @@ public class Cell implements Serializable {
 	/** The position (row and column coordinates) of the cell. */
 	private Position _position;
 
+	/** The function manager (used for notificating changes to the content). */
+	private FunctionManager _functionManager;
+
 	/** The serial version UID for object serialization. */
 	@Serial
 	private static final long serialVersionUID = 202310072353L;
@@ -32,6 +35,7 @@ public class Cell implements Serializable {
 	Cell(int row, int column) {
 		_position = new Position(row, column);
 		_content = new LiteralNullValue();
+		_functionManager = new FunctionManager();
 	}
 
 	/**
@@ -43,6 +47,7 @@ public class Cell implements Serializable {
 	Cell(Position position) {
 		_position = position;
 		_content = new LiteralNullValue();
+		_functionManager = new FunctionManager();
 	}
 
 	/**
@@ -75,11 +80,17 @@ public class Cell implements Serializable {
 	 */
 	void setContent(Content content) {
 		_content = content;
+		_functionManager.notifyFunctions();
 	}
 
 	// FIXME
 	String getContentType() {
 		return _content.getType();
+	}
+
+	// FIXME
+	FunctionManager getFunctionManager() {
+		return _functionManager;
 	}
 
 	/**
