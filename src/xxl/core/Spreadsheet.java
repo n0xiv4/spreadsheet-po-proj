@@ -2,12 +2,14 @@ package xxl.core;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.ArrayList;
 
 import java.io.Serial;
 import java.io.Serializable;
 
 import xxl.core.exception.InvalidCellIntervalException;
+import xxl.core.exception.InvalidFunctionException;
 import xxl.core.exception.InvalidValueTypeException;
 import xxl.core.exception.UnrecognizedEntryException;
 
@@ -49,6 +51,7 @@ public class Spreadsheet implements Serializable {
 		_users = new ArrayList<User>();
 		_cells = new ArrayList<Cell>();
 		_spreadsheetRange = new Interval(new Position(rows, columns), this);
+		_cutBuffer = new CutBuffer();
 
 		populateSpreadsheet();
 	}
@@ -62,12 +65,45 @@ public class Spreadsheet implements Serializable {
 	 *        in the specified cell.
 	 */
 	public void insertContent(int row, int column, Content contentSpecification) throws UnrecognizedEntryException {
-		findCellByPosition(new Position(row, column)).setContent(contentSpecification);
+		getCellInPosition(new Position(row, column)).setContent(contentSpecification);
 	}
 
-	public void copyGamma(String gamma) {
-		Interval intervalToCopy;
-		// FIXME
+	// FIXME
+	public void cutGamma(String gamma) throws InvalidCellIntervalException {
+		copyGamma(gamma);
+		deleteGamma(gamma);
+	}
+
+	// FIXME
+	public void copyGamma(String gamma) throws InvalidCellIntervalException {
+		Interval intervalToCopy = new Interval(gamma, this);
+		_cutBuffer.setCutBuffer(getCellsFromInterval(new Interval(intervalToCopy)));
+	}
+
+	// FIXME
+	public void pasteGamma(String gamma) throws InvalidCellIntervalException {
+		Interval intervalToPaste = new Interval(gamma, this);
+		List<Content> contentToPaste = convertCellListToContentList(_cutBuffer.getCells());
+		intervalToPaste.pasteContent(contentToPaste);
+	}
+
+	// FIXME
+	public void deleteGamma(String gamma) throws InvalidCellIntervalException {
+		Interval intervalToDelete = new Interval(gamma, this);
+		for (Position position: intervalToDelete.getPositions()) {
+			getCellInPosition(position).setContent(new LiteralNullValue());
+		}
+	}
+
+	// FIXME
+	public void insertGamma(String gamma, String contentSpecification) throws InvalidCellIntervalException, InvalidFunctionException, UnrecognizedEntryException {
+		// convert contentSpecification to a Content instance
+		Parser lineParser = new Parser(this);
+		Content contentToInsert = lineParser.parseUserInput(contentSpecification);
+
+		// get Interval where to insert and do it
+		Interval intervalToInsert = new Interval(gamma, this);
+		intervalToInsert.pasteContent(contentToInsert);
 	}
 
 	/**
@@ -116,7 +152,18 @@ public class Spreadsheet implements Serializable {
 	public String visualizeFunction(String function) {
 		List<Cell> foundCells = filterCellsByFunction(function);
 		sortCellsByContentType(foundCells);
-		return displaySortedCells(foundCells);
+		return displayCells(foundCells);
+	}
+
+	// FIXME
+	public String visualizeCutBuffer() {
+		try {
+			return displayCells(_cutBuffer.getCells());
+		}
+		catch (NullPointerException e) {
+			// No cutBuffer exists.
+			return "";
+		}
 	}
 	
 	/**
@@ -148,8 +195,18 @@ public class Spreadsheet implements Serializable {
 	 *
 	 * @return {@code true} if the spreadsheet range has been changed; {@code false} otherwise.
 	 */
-	public boolean isChanged() {
+	boolean isChanged() {
 		return _changed;
+	}
+
+	// FIXME
+	void flagAsChanged() {
+		_changed = true;
+	}
+
+	// FIXME
+	void flagAsUnchanged() {
+		_changed = false;
 	}
 
 	/**
@@ -161,7 +218,12 @@ public class Spreadsheet implements Serializable {
 	 * @throws CellNotFoundException If no cell exists at the provided position in the spreadsheet.
 	 */
 	Literal getValueInPosition(Position cellPosition) {
-		return findCellByPosition(cellPosition).getValue();
+		return getCellInPosition(cellPosition).getValue();
+	}
+
+	// FIXME
+	Content getContentInPosition(Position cellPosition) {
+		return getCellInPosition(cellPosition).getContent();
 	}
 	
 	/**
@@ -171,21 +233,23 @@ public class Spreadsheet implements Serializable {
 	 * @return A string representation of the content in the cell at the given {@link Position}.
 	 */
 	String visualizeCellInPosition(Position cellPosition) {
-		return findCellByPosition(cellPosition).toString();
+		return getCellInPosition(cellPosition).toString();
 	}
 
 	/**
 	 * Finds and returns a {@link Cell} within a collection of cells based on its position.
+	 * It's a private method so no Cells are returned (could result in a privacy leak, because
+	 * Cells aren't 100% immutable).
 	 *
 	 * @param cellPos The {@link Position} object representing the row and column coordinates
 	 *                to search for within the collection of cells.
 	 * @return The {@link Cell} with the specified position if found; {@code null} if no cell
 	 *         with the given position exists in the collection.
 	 */
-	private Cell findCellByPosition(Position cellPos) {
+	private Cell getCellInPosition(Position cellPos) {
 		for (Cell cell: _cells) {
 			if (cell.getPosition().equals(cellPos)) {
-					return cell;
+				return cell;
 			}
 		}
 		return null;
@@ -213,7 +277,6 @@ public class Spreadsheet implements Serializable {
 	 */
 	private String findCellsByStringValue(String strValue) {
 		StringBuilder display = new StringBuilder();
-
 		for (Cell cell : _cells) {
 			try {
 				if (cell.getValue().getStringValue().equals(strValue)) {
@@ -223,7 +286,6 @@ public class Spreadsheet implements Serializable {
 			catch (InvalidValueTypeException e) {
 			}
 		}
-
 		return display.toString();
 	}
 	
@@ -236,7 +298,6 @@ public class Spreadsheet implements Serializable {
 	 */
 	private String findCellsByIntValue(int intValue) {
 		StringBuilder display = new StringBuilder();
-	
 		for (Cell cell : _cells) {
 			try {
 				if (cell.getValue().getIntValue() == intValue) {
@@ -246,7 +307,6 @@ public class Spreadsheet implements Serializable {
 			catch (InvalidValueTypeException e) {
 			}
 		}
-	
 		return display.toString();
 	}
 
@@ -279,9 +339,9 @@ public class Spreadsheet implements Serializable {
 	 * Converts a list of cells into a string and removes the last newline character if the list is not empty.
 	 *
 	 * @param cells The list of cells to display.
-	 * @return A string representing the sorted cells.
+	 * @return A string representing of the cells.
 	 */
-	private String displaySortedCells(List<Cell> cells) {
+	private String displayCells(List<Cell> cells) {
 		StringBuilder display = new StringBuilder();
 		for (Cell sCell : cells) {
 			display.append(sCell).append("\n");
@@ -290,6 +350,22 @@ public class Spreadsheet implements Serializable {
 			display.deleteCharAt(display.length() - 1);
 		}
 		return display.toString();
+	}
+
+	// FIXME
+	private List<Cell> getCellsFromInterval(Interval toRead) {
+		List<Cell> cells = new ArrayList<Cell>();
+		Spreadsheet intervalSpreadsheet = toRead.getLinkedSpreadsheet();
+		for (Position cellPosition: toRead.getPositions()) {
+			cells.add(intervalSpreadsheet.getCellInPosition(cellPosition));
+		}
+		return cells;
+	}
+
+	// FIXME
+	private List<Content> convertCellListToContentList(List<Cell> cells) {
+		// for each Cell in the list, we get its content
+		return cells.stream().map(cell -> cell.getContent()).collect(Collectors.toList());
 	}
 	
 }

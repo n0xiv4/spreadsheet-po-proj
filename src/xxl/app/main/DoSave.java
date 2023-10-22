@@ -20,16 +20,18 @@ class DoSave extends Command<Calculator> {
 	
 	@Override
 	protected final void execute() throws FileOpenFailedException {
-		try {
-			if (_receiver.hasFilename()) {
-				_receiver.saveFile();
+		if (_receiver.isCurrentSpreadsheetChanged()) {
+			try {
+				if (_receiver.hasFilename()) {
+					_receiver.saveFile();
+				}
+				else {
+					_receiver.saveFileAs(Form.requestString(Message.newSaveAs()));
+				}
 			}
-			else {
-				_receiver.saveFileAs(Form.requestString(Message.newSaveAs()));
+			catch (MissingFileAssociationException | IOException e) {
+				throw new FileOpenFailedException(e);
 			}
-		}
-		catch (MissingFileAssociationException | IOException e) {
-			throw new FileOpenFailedException(e);
 		}
 	}
 }

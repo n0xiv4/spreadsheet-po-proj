@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 import xxl.core.exception.InvalidCellIntervalException;
+import xxl.core.exception.UnrecognizedEntryException;
 
 /**
  * The {@code Interval} class represents a rectangular interval or range of positions within a
@@ -76,6 +77,18 @@ public class Interval implements Serializable {
 		}
 	}
 
+	// FIXME javadoc - creates an interval for the cutbuffer
+	Interval(Interval toCopy) {
+		int newSheetRows = calculateNewSheetRows(toCopy);
+		int newSheetColumns = calculateNewSheetColumns(toCopy);
+	
+		_linkedSpreadsheet = new Spreadsheet(newSheetRows, newSheetColumns);
+		_firstPosition = new Position(1, 1);
+		_lastPosition = new Position(newSheetRows, newSheetColumns);
+	
+		copyContent(toCopy);
+	}
+
 	/**
 	 * Reads the content within the interval and returns it as a string.
 	 *
@@ -136,20 +149,69 @@ public class Interval implements Serializable {
 		return _lastPosition;
 	}
 
+	List<Position> getPositions() {
+		List<Position> positions = new ArrayList<Position>();
+		if (onSameRow()) {
+			int row = _firstPosition.getRow();
+			for (int col = _firstPosition.getColumn(); col <= _lastPosition.getColumn(); col++) {
+				positions.add(new Position(row, col));
+			}
+		}
+		else {
+			int col = _firstPosition.getColumn();
+			for (int row = _firstPosition.getRow(); row <= _lastPosition.getRow(); row++) {
+				positions.add(new Position(row, col));
+			}
+		}
+		return positions;
+	}
+
 	// FIXME javadoc
 	List<Content> getContent() {
 		List<Content> contents = new ArrayList<Content>();
 		if (onSameRow()) {
 			for (int col = _firstPosition.getColumn(); col <= _lastPosition.getColumn(); col++) {
-				contents.add(_linkedSpreadsheet.getValueInPosition(new Position(getFirstPosition().getRow(), col)));
+				contents.add(_linkedSpreadsheet.getContentInPosition(new Position(getFirstPosition().getRow(), col)));
 			}
 		}
 		else {
 			for (int row = _firstPosition.getRow(); row <= _lastPosition.getRow(); row++) {
-				contents.add(_linkedSpreadsheet.getValueInPosition(new Position(row, getFirstPosition().getColumn())));
+				contents.add(_linkedSpreadsheet.getContentInPosition(new Position(row, getFirstPosition().getColumn())));
 			}
 		}
 		return contents;
+	}
+
+	Spreadsheet getLinkedSpreadsheet() {
+		return _linkedSpreadsheet;
+	}
+
+	// FIXME
+	void pasteContent(Content content) {
+		for (Position position: getPositions()) {
+			try {
+				_linkedSpreadsheet.insertContent(position.getRow(), position.getColumn(), content);
+			} 
+			catch (UnrecognizedEntryException e) {
+				// Won't happen - this exception would already have been handled by the program in importFile
+			}
+		}
+	}
+
+	// FIXME
+	void pasteContent(List<Content> contents) {
+		List<Position> positions = getPositions();
+		int index = 0;		
+		for (Content content: contents) {
+			Position currPosition = positions.get(index);
+			try {
+				_linkedSpreadsheet.insertContent(currPosition.getRow(), currPosition.getColumn(), content);
+			} 
+			catch (UnrecognizedEntryException e) {
+				// Won't happen - this exception would already have been handled by the program in importFile
+			}
+			index++;
+		}
 	}
 
 	/**
@@ -184,5 +246,35 @@ public class Interval implements Serializable {
 	 */
 	private boolean onSameRow() {
 		return _firstPosition.getRow() == _lastPosition.getRow();
+	}
+
+	// FIXME
+	private int calculateNewSheetRows(Interval toCopy) {
+		if (toCopy.getFirstPosition().getColumn() == toCopy.getLastPosition().getColumn()) {
+			return toCopy.getLastPosition().getRow() - toCopy.getFirstPosition().getRow() + 1;
+		}
+		return 1;
+	}
+	
+	private int calculateNewSheetColumns(Interval toCopy) {
+		if (toCopy.getFirstPosition().getRow() == toCopy.getLastPosition().getRow()) {
+			return toCopy.getLastPosition().getColumn() - toCopy.getFirstPosition().getColumn() + 1;
+		}
+		return 1;
+	}
+
+	private void copyContent(Interval toCopy) {
+		List<Position> positions = getPositions();
+		int index = 0;		
+		for (Content content : toCopy.getContent()) {
+			Position currPosition = positions.get(index);
+			try {
+				_linkedSpreadsheet.insertContent(currPosition.getRow(), currPosition.getColumn(), content);
+			} 
+			catch (UnrecognizedEntryException e) {
+				// Won't happen - this exception would already have been handled by the program in importFile
+			}
+			index++;
+		}
 	}
 }

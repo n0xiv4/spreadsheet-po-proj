@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 
 import xxl.app.exception.UnknownFunctionException;
 import xxl.core.exception.InvalidCellIntervalException;
+import xxl.core.exception.InvalidFunctionException;
 import xxl.core.exception.UnrecognizedEntryException;
 
 /**
@@ -56,6 +57,11 @@ class Parser {
 		return _spreadsheet;
 	}
 
+	// FIXME
+	Content parseUserInput(String contentSpecification) throws UnrecognizedEntryException, InvalidFunctionException {
+		return parseContent(contentSpecification);
+	}
+
 	/**
 	 * Parses and extracts the dimensions (number of rows and columns) of a spreadsheet
 	 * from the given input {@link BufferedReader}.
@@ -91,8 +97,7 @@ class Parser {
 	 * Parses a line of input and inserts content into the spreadsheet based on the provided line.
 	 *
 	 * @param line The input line to parse and process.
-	 * @throws UnrecognizedEntryException If the line cannot be recognized
-	 *                                    or contains invalid entries.
+	 * @throws UnrecognizedEntryException If the content cannot be recognized or contain invalid syntax.
 	 */
 	private void parseLine(String line) throws UnrecognizedEntryException {
 		String[] components = line.split("\\|");
@@ -116,9 +121,10 @@ class Parser {
 	 *
 	 * @param contentSpecification The content specification string to parse, which may start with an '=' character.
 	 * @return The parsed {@link Content} object.
-	 * @throws UnrecognizedEntryException If the content specification cannot be recognized or contains invalid syntax.
+	 * @throws UnrecognizedEntryException If the arguments cannot be recognized or contain invalid syntax.
+	 * @throws InvalidFunctionException If the function cannot be recognized.
 	 */
-	Content parseContent(String contentSpecification) throws UnrecognizedEntryException {
+	Content parseContent(String contentSpecification) throws UnrecognizedEntryException, InvalidFunctionException {
 		char c = contentSpecification.charAt(0);
 
 		if (c == '=') {
@@ -158,9 +164,10 @@ class Parser {
 	 * @param contentSpecification The string representation of the content expression to parse.
 	 *                             (This is what comes after '=' in the input.)
 	 * @return The parsed {@link Content} object.
-	 * @throws UnrecognizedEntryException If the content specification cannot be recognized or contains invalid syntax.
+	 * @throws UnrecognizedEntryException If the arguments cannot be recognized or contain invalid syntax.
+	 * @throws InvalidFunctionException If the function cannot be recognized.
 	 */
-	private Content parseContentExpression(String contentSpecification) throws UnrecognizedEntryException {
+	private Content parseContentExpression(String contentSpecification) throws UnrecognizedEntryException, InvalidFunctionException {
 		if (contentSpecification.contains("(")) {
 			return parseFunction(contentSpecification);
 		}
@@ -175,9 +182,10 @@ class Parser {
 	 *
 	 * @param functionSpecification The string representation of the function expression to parse.
 	 * @return The parsed {@link Content} object.
-	 * @throws UnrecognizedEntryException If the function expression cannot be recognized or contains invalid syntax.
+	 * @throws UnrecognizedEntryException If the arguments cannot be recognized or contain invalid syntax.
+	 * @throws InvalidFunctionException If the function cannot be recognized.
 	 */
-	private Content parseFunction(String functionSpecification) throws UnrecognizedEntryException {
+	private Content parseFunction(String functionSpecification) throws UnrecognizedEntryException, InvalidFunctionException {
 		String[] components = functionSpecification.split("[()]");
 		if (components[1].contains(",")) {
 			return parseBinaryFunction(components[0], components[1]);
@@ -191,9 +199,10 @@ class Parser {
 	 * @param functionName The name of the binary function (e.g., "ADD", "SUB").
 	 * @param args         The arguments of the binary function as a string.
 	 * @return The parsed {@link Content} object representing the binary function.
-	 * @throws UnrecognizedEntryException If the function or its arguments cannot be recognized or contains invalid syntax.
+	 * @throws UnrecognizedEntryException If the arguments cannot be recognized or contain invalid syntax.
+	 * @throws InvalidFunctionException If the function cannot be recognized.
 	 */
-	private Content parseBinaryFunction(String functionName, String args) throws UnrecognizedEntryException {
+	private Content parseBinaryFunction(String functionName, String args) throws UnrecognizedEntryException, InvalidFunctionException {
 		String[] arguments = args.split(",");
 		Content arg0 = parseArgumentExpression(arguments[0]);
 		Content arg1 = parseArgumentExpression(arguments[1]);
@@ -203,7 +212,7 @@ class Parser {
 			case "SUB" -> new SubFunction(arg0, arg1);
 			case "MUL" -> new MulFunction(arg0, arg1);
 			case "DIV" -> new DivFunction(arg0, arg1);
-			default -> throw new UnrecognizedEntryException(functionName);
+			default -> throw new InvalidFunctionException(functionName);
 		};
 	}
 
@@ -225,7 +234,7 @@ class Parser {
 	}
 
 	// FIXME javadoc
-	private Content parseIntervalFunction(String functionName, String rangeDescription) throws UnrecognizedEntryException {
+	private Content parseIntervalFunction(String functionName, String rangeDescription) throws InvalidFunctionException {
 		try {
 			Interval interval = new Interval(rangeDescription, _spreadsheet);
 			return switch (functionName) {
@@ -237,7 +246,7 @@ class Parser {
 			};
 		}
 		catch (InvalidCellIntervalException | UnknownFunctionException e) {
-			throw new UnrecognizedEntryException(functionName);
+			throw new InvalidFunctionException(functionName);
 		}
 	}
 }

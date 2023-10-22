@@ -63,6 +63,11 @@ public class Cell implements Serializable {
 		return _position;
 	}
 
+	// FIXME
+	Content getContent() {
+		return _content;
+	}
+
 	/**
 	 * Sets the content for the cell.
 	 *

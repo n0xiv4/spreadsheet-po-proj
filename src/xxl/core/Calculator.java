@@ -85,6 +85,8 @@ public class Calculator {
 		else {
 			try (FileOutputStream fileOut = new FileOutputStream(_currentFile);
 				ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
+				// Spreadsheet is now saved, not changed anymore
+				_spreadsheet.flagAsUnchanged();
 				out.writeObject(_spreadsheet);
 			}
 			// Exceptions aren't handled here, so no catch needed
@@ -99,11 +101,13 @@ public class Calculator {
 	 * @throws IOException if there is some error while serializing the state of the network to disk.
 	 */
 	public void saveFileAs(String filename) throws IOException {
-		FileOutputStream fileOut = new FileOutputStream(filename);
-		ObjectOutputStream out = new ObjectOutputStream(fileOut);
-		out.writeObject(_spreadsheet);
-		out.close();
-		fileOut.close();
+		setCurrentFile(filename);
+		try {
+			saveFile();
+		}
+		catch (MissingFileAssociationException e) {
+			// Not the case here, association added with setCurrentFile
+		}
 	}
 
 	/**
@@ -134,6 +138,7 @@ public class Calculator {
 			Parser parser = new Parser(_spreadsheet);
 			_spreadsheet = parser.parseFile(filename);
 			_spreadsheet.linkUser(_activeUser);
+			_spreadsheet.flagAsChanged();
 		} 
 		catch (IOException | UnrecognizedEntryException e) {
 			throw new ImportFileException(filename, e);
@@ -179,5 +184,10 @@ public class Calculator {
 			}
 		}
 		return false;
+	}
+
+	// FIXME
+	public boolean isCurrentSpreadsheetChanged() {
+		return _spreadsheet.isChanged();
 	}
 }

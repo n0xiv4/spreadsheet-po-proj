@@ -124,6 +124,11 @@ public class Position implements Serializable, Comparable<Position> {
 		return _column;
 	}
 
+	// FIXME
+	boolean onSameRow(Position toCompare) {
+		return _row == toCompare._row;
+	}
+
 	/**
 	 * Checks if the current {@link Position} is valid.
 	 * A valid position must have both row and column indices greater than zero.

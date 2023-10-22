@@ -21,7 +21,7 @@ class DoNew extends Command<Calculator> {
 	
 	@Override
 	protected final void execute() throws CommandException {
-		if (_receiver.getSpreadsheet() != null && Form.confirm(Message.saveBeforeExit())) {
+		if (_receiver.isCurrentSpreadsheetChanged() && Form.confirm(Message.saveBeforeExit())) {
 			try {
 				_receiver.saveFile();
 			}
