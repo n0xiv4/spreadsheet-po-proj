@@ -25,7 +25,11 @@ public abstract class Literal extends Content {
 	 */
 	abstract public String getStringValue() throws InvalidValueTypeException;
 
-	// FIXME
+	/**
+	 * Gets the type of this object.
+	 *
+	 * @return The type, which is "LITERAL."
+	 */
 	@Override
 	public String getType() {
 		return "LITERAL";

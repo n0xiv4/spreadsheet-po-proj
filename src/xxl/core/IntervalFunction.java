@@ -25,13 +25,20 @@ public abstract class IntervalFunction extends Function implements Listener {
 		_value = computeValue();
 	}
 
-	// FIXME
+	/**
+     * Gets the current value of the interval function.
+     *
+     * @return The current computed value of the function.
+     */
 	@Override
 	public Literal getValue() {
 		return _value;
 	}
 
-	// FIXME
+	/**
+     * Called when the function needs to update its value, typically triggered by changes in the interval's cells.
+     * It recomputes the function's value based on the current state of the interval.
+     */
 	@Override 
 	public void update() {
 		_value = computeValue();

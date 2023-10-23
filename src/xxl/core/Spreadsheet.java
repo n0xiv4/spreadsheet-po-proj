@@ -68,7 +68,6 @@ public class Spreadsheet implements Serializable {
 		getCellInPosition(new Position(row, column)).setContent(contentSpecification);
 	}
 
-	// FIXME
 	/**
 	 * Inserts the content of the given list of cells into the specified initial position.
 	 * This happens when the user input Interval has a single position only.
@@ -104,21 +103,39 @@ public class Spreadsheet implements Serializable {
 		toPaste.pasteContent(cells);
 	}
 
-	
-
-	// FIXME
+	/**
+	 * Cuts the specified gamma range from the spreadsheet. This operation involves copying the content within
+	 * the given gamma range and then deleting the content from the spreadsheet.
+	 *
+	 * @param gamma The gamma range coordinates in string format (e.g., "1;1:2;2" for an interval).
+	 * @throws InvalidCellIntervalException if the provided gamma range is invalid or cannot be cut.
+	 */
 	public void cutGamma(String gamma) throws InvalidCellIntervalException {
 		copyGamma(gamma);
 		deleteGamma(gamma);
 	}
 
-	// FIXME
+	/**
+	 * Copies the content within the specified gamma range and stores it in the cut buffer for later use. The copied
+	 * content is determined by creating an interval from the provided gamma range and extracting the cells within it.
+	 *
+	 * @param gamma The gamma range coordinates in string format (e.g., "1;1:2;2" for an interval).
+	 * @throws InvalidCellIntervalException if the provided gamma range is invalid or cannot be copied.
+	 */
 	public void copyGamma(String gamma) throws InvalidCellIntervalException {
 		Interval intervalToCopy = new Interval(gamma, this);
 		_cutBuffer.setCutBuffer(getCellsFromInterval(new Interval(intervalToCopy)));
 	}
 
-	// FIXME
+	/**
+	 * Pastes the content from the cut buffer into the specified gamma range. The operation depends on the nature of
+	 * the gamma range and the contents in the cut buffer. If the gamma range is a single cell and the cut buffer
+	 * contains multiple cells, the content is inserted at the specified position. Otherwise, the content is pasted
+	 * within the gamma range, adjusting to the shape of the range.
+	 *
+	 * @param gamma The gamma range coordinates in string format (e.g., "1;1:2;2" for an interval).
+	 * @throws InvalidCellIntervalException if the provided gamma range is invalid or cannot be pasted.
+	 */
 	public void pasteGamma(String gamma) throws InvalidCellIntervalException {
 		Interval intervalToPaste = new Interval(gamma, this);
 		if (_cutBuffer.getCells().size() > 1 && intervalToPaste.isSingle()) {
@@ -129,7 +146,14 @@ public class Spreadsheet implements Serializable {
 		}
 	}
 
-	// FIXME
+	/**
+	 * Deletes the content within the specified gamma range by setting it to a null value. The deletion operation
+	 * is performed by creating an interval from the provided gamma range and then iterating through the positions
+	 * within the interval to set their content to a null value.
+	 *
+	 * @param gamma The gamma range coordinates in string format (e.g., "1;1:2;2" for an interval).
+	 * @throws InvalidCellIntervalException if the provided gamma range is invalid or cannot be deleted.
+	 */
 	public void deleteGamma(String gamma) throws InvalidCellIntervalException {
 		Interval intervalToDelete = new Interval(gamma, this);
 		for (Position position: intervalToDelete.getPositions()) {
@@ -137,7 +161,17 @@ public class Spreadsheet implements Serializable {
 		}
 	}
 
-	// FIXME
+	/**
+	 * Inserts the specified content into the cells within the specified gamma range. The insertion operation
+	 * involves converting the `contentSpecification` into a `Content` instance, creating an interval from the
+	 * provided gamma range, and pasting the content into the interval.
+	 *
+	 * @param gamma              The gamma range coordinates in string format (e.g., "1;1:2;2" for an interval).
+	 * @param contentSpecification The string specifying the content to be inserted into the cells.
+	 * @throws InvalidCellIntervalException if the provided gamma range is invalid or cannot be inserted.
+	 * @throws InvalidFunctionException   if the `contentSpecification` contains an invalid function.
+	 * @throws UnrecognizedEntryException  if the `contentSpecification` contains unrecognized input.
+	 */
 	public void insertGamma(String gamma, String contentSpecification) throws InvalidCellIntervalException, InvalidFunctionException, UnrecognizedEntryException {
 		// convert contentSpecification to a Content instance
 		Parser lineParser = new Parser(this);
@@ -197,7 +231,12 @@ public class Spreadsheet implements Serializable {
 		return displayCells(foundCells);
 	}
 
-	// FIXME
+	/**
+	 * Visualizes the content of the cut buffer, if it exists. The method retrieves the cells from the cut buffer,
+	 * and if the cut buffer exists, it returns a string representation of the cells using the `displayCells` method.
+	 *
+	 * @return A string representing the content of the cut buffer or an empty string if the cut buffer does not exist.
+	 */
 	public String visualizeCutBuffer() {
 		try {
 			return displayCells(_cutBuffer.getCells());
@@ -227,7 +266,12 @@ public class Spreadsheet implements Serializable {
 		return _spreadsheetRange.getLastPosition();
 	}
 
-	// FIXME
+	/**
+	 * Retrieves the cells stored in the cut buffer. This method returns a list of cells that have been previously
+	 * copied or cut and stored in the cut buffer.
+	 *
+	 * @return A list of cells representing the content in the cut buffer.
+	 */
 	public List<Cell> getCutBuffer() {
 		return _cutBuffer.getCells();
 	}
@@ -241,12 +285,18 @@ public class Spreadsheet implements Serializable {
 		return _changed;
 	}
 
-	// FIXME
+	/**
+	 * Flags the current spreadsheet as changed. This method sets a flag to indicate that the spreadsheet has been modified.
+	 * Call this method to mark the spreadsheet as changed after making modifications to its content.
+	 */
 	void flagAsChanged() {
 		_changed = true;
 	}
 
-	// FIXME
+	/**
+	 * Flags the current spreadsheet as unchanged. This method sets a flag to indicate that the spreadsheet has not been
+	 * modified. Call this method to mark the spreadsheet as unchanged when no modifications have occurred.
+	 */
 	void flagAsUnchanged() {
 		_changed = false;
 	}
@@ -263,7 +313,13 @@ public class Spreadsheet implements Serializable {
 		return getCellInPosition(cellPosition).getValue();
 	}
 
-	// FIXME
+	/**
+	 * Retrieves the content of the cell at the specified position within the spreadsheet. This method gets the cell
+	 * at the given position and returns its content.
+	 *
+	 * @param cellPosition The position of the cell for which to retrieve the content.
+	 * @return The content of the cell at the specified position.
+	 */
 	Content getContentInPosition(Position cellPosition) {
 		return getCellInPosition(cellPosition).getContent();
 	}
@@ -278,6 +334,13 @@ public class Spreadsheet implements Serializable {
 		return getCellInPosition(cellPosition).toString();
 	}
 
+	/**
+	 * Adds a function to all cells within the specified interval. This method iterates through the cells within the given
+	 * interval and adds the specified function to the function manager of each cell.
+	 *
+	 * @param interval  The interval for which to add the function to its cells.
+	 * @param function  The function to be added to the cells within the interval.
+	 */
 	void addFunctionToInterval(Interval interval, IntervalFunction function) {
 		for (Cell cell: getCellsFromInterval(interval)) {
 			cell.getFunctionManager().addFunction(function);
@@ -400,7 +463,13 @@ public class Spreadsheet implements Serializable {
 		return display.toString();
 	}
 
-	// FIXME
+	/**
+	 * Retrieves a list of cells within the specified interval. This method extracts cells from the given interval
+	 * and returns them as a list of cell objects.
+	 *
+	 * @param toRead The interval from which to retrieve cells.
+	 * @return A list of cells within the specified interval.
+	 */
 	private List<Cell> getCellsFromInterval(Interval toRead) {
 		List<Cell> cells = new ArrayList<Cell>();
 		Spreadsheet intervalSpreadsheet = toRead.getLinkedSpreadsheet();
@@ -410,10 +479,15 @@ public class Spreadsheet implements Serializable {
 		return cells;
 	}
 
-	// FIXME
-	 List<Content> convertCellListToContentList(List<Cell> cells) {
+	/**
+	 * Converts a list of cells into a list of their associated contents. This method takes a list of cells and returns
+	 * a list of the content objects associated with each cell in the same order.
+	 *
+	 * @param cells The list of cells to be converted into content objects.
+	 * @return A list of content objects corresponding to the content of the input cells.
+	 */
+	List<Content> convertCellListToContentList(List<Cell> cells) {
 		// for each Cell in the list, we get its content
 		return cells.stream().map(cell -> cell.getContent()).collect(Collectors.toList());
 	}
-	
 }

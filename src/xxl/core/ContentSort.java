@@ -7,6 +7,7 @@ import java.util.Comparator;
  * Used mainly for comparing cells with functions.
  */
 public class ContentSort implements Comparator<Cell> {
+    
     /**
      * Compares two cells based on their content type.
      *

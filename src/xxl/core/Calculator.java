@@ -187,7 +187,11 @@ public class Calculator {
 		return false;
 	}
 
-	// FIXME
+	/**
+	 * Checks whether the current spreadsheet has been changed or modified.
+	 *
+	 * @return {@code true} if the current spreadsheet has been changed; {@code false} otherwise.
+	 */
 	public boolean isCurrentSpreadsheetChanged() {
 		return _spreadsheet.isChanged();
 	}

@@ -36,6 +36,11 @@ public abstract class BinaryFunction extends Function {
 		return getValue() + "=" + getType() + "(" + arg1 + "," + arg2 + ")";
 	}
 
+	/**
+	 * Retrieves the value of this interval function. This method computes and returns the value of the function.
+	 *
+	 * @return The computed value of the interval function as a {@link Literal} object.
+	 */
 	@Override
 	public Literal getValue() {
 		return computeValue();

@@ -20,7 +20,11 @@ public abstract class Function extends Content {
 		_functionName = functionName;
 	}
 
-	// FIXME javadoc
+	/**
+	 * Gets the type of this object.
+	 *
+	 * @return The type, which is the function name.
+	 */
 	@Override
 	public String getType() {
 		return _functionName;

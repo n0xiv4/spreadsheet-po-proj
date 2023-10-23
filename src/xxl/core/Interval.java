@@ -154,6 +154,13 @@ public class Interval implements Serializable {
 		return _lastPosition;
 	}
 
+	/**
+	 * Returns a list of positions within the interval. The positions are generated based on the first
+	 * and last positions of the interval. If the interval spans multiple rows or columns, it provides
+	 * a list of all positions in that range.
+	 *
+	 * @return A list of {@link Position} objects representing the positions within the interval.
+	 */
 	List<Position> getPositions() {
 		List<Position> positions = new ArrayList<Position>();
 		if (onSameRow()) {
@@ -171,7 +178,12 @@ public class Interval implements Serializable {
 		return positions;
 	}
 
-	// FIXME javadoc
+	/**
+	 * Retrieves a list of content objects within the interval. The content within the interval can span
+	 * multiple rows or columns, and this method collects all the content in that range.
+	 *
+	 * @return A list of {@link Content} objects representing the content within the interval.
+	 */
 	List<Content> getContent() {
 		List<Content> contents = new ArrayList<Content>();
 		if (onSameRow()) {
@@ -187,11 +199,21 @@ public class Interval implements Serializable {
 		return contents;
 	}
 
+	/**
+	 * Retrieves the associated spreadsheet linked to this interval.
+	 *
+	 * @return The {@link Spreadsheet} to which this interval is associated.
+	 */
 	Spreadsheet getLinkedSpreadsheet() {
 		return _linkedSpreadsheet;
 	}
 
-	// FIXME
+	/**
+	 * Pastes the specified content into all positions within the interval. This method inserts the provided
+	 * content into each position within the interval, effectively populating the interval with the same content.
+	 *
+	 * @param content The {@link Content} to be pasted into all positions within the interval.
+	 */
 	void pasteContent(Content content) {
 		for (Position position: getPositions()) {
 			try {
@@ -203,7 +225,13 @@ public class Interval implements Serializable {
 		}
 	}
 
-	// FIXME
+	/**
+	 * Pastes the contents of a list of cells into the corresponding positions within the interval. This method inserts
+	 * the content of each cell in the list into the positions within the interval, effectively populating the interval
+	 * with the contents of the provided cells. If a position is out of bounds, the operation is ignored.
+	 *
+	 * @param cells The list of {@link Cell} objects containing the content to be pasted into the interval.
+	 */
 	void pasteContent(List<Cell> cells) {
 		List<Position> positions = getPositions();
 		int index = 0;		
@@ -222,12 +250,23 @@ public class Interval implements Serializable {
 		}
 	}
 
-	// FIXME
+	/**
+	 * Checks if the interval represents a single cell or a range of cells. A single cell has the same first
+	 * and last positions within the interval, while a range of cells has different first and last positions.
+	 *
+	 * @return {@code true} if the interval represents a single cell; {@code false} if it represents a range of cells.
+	 */
 	boolean isSingle() {
 		return (_firstPosition.getRow() == _lastPosition.getRow()) 
 				&& (_firstPosition.getColumn() == _lastPosition.getColumn());
 	}
 
+	/**
+	 * Adds an interval function to all cells within the current interval. This method associates the interval function
+	 * with all cells within the interval so that updates in the cells trigger the function's recalculation.
+	 *
+	 * @param function The {@link IntervalFunction} to be associated with the cells within the interval.
+	 */
 	void addFunctionToCells(IntervalFunction function) {
 		_linkedSpreadsheet.addFunctionToInterval(this, function);
 	}
@@ -257,7 +296,6 @@ public class Interval implements Serializable {
 			}
 		}
 		catch (ArrayIndexOutOfBoundsException e) {
-			// FIXME
 			throw new InvalidCellIntervalException();
 		}
 		return positions;
@@ -272,7 +310,13 @@ public class Interval implements Serializable {
 		return _firstPosition.getRow() == _lastPosition.getRow();
 	}
 
-	// FIXME
+	/**
+	 * Calculates the number of rows required for a new spreadsheet when copying an interval. The calculation depends
+	 * on whether the interval spans multiple rows or not.
+	 *
+	 * @param toCopy The interval to be copied, used for determining the required rows.
+	 * @return The number of rows required for a new spreadsheet to accommodate the copied interval.
+	 */
 	private int calculateNewSheetRows(Interval toCopy) {
 		if (toCopy.getFirstPosition().getColumn() == toCopy.getLastPosition().getColumn()) {
 			return toCopy.getLastPosition().getRow() - toCopy.getFirstPosition().getRow() + 1;
@@ -280,6 +324,13 @@ public class Interval implements Serializable {
 		return 1;
 	}
 	
+	/**
+	 * Calculates the number of columns required for a new spreadsheet when copying an interval. The calculation depends
+	 * on whether the interval spans multiple columns or not.
+	 *
+	 * @param toCopy The interval to be copied, used for determining the required columns.
+	 * @return The number of columns required for a new spreadsheet to accommodate the copied interval.
+	 */
 	private int calculateNewSheetColumns(Interval toCopy) {
 		if (toCopy.getFirstPosition().getRow() == toCopy.getLastPosition().getRow()) {
 			return toCopy.getLastPosition().getColumn() - toCopy.getFirstPosition().getColumn() + 1;
@@ -287,6 +338,12 @@ public class Interval implements Serializable {
 		return 1;
 	}
 
+	/**
+	 * Copies the content from one interval to another by iterating over positions within the source interval
+	 * and inserting content into the corresponding positions in the destination interval.
+	 *
+	 * @param toCopy The source interval from which content will be copied.
+	 */
 	private void copyContent(Interval toCopy) {
 		List<Position> positions = getPositions();
 		int index = 0;		

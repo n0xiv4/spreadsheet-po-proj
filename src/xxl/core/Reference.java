@@ -51,7 +51,11 @@ public class Reference extends Content {
 		return referenceValue + "=" + _referencePosition.toString();
 	}
 
-	// FIXME
+	/**
+	 * Gets the type of this object.
+	 *
+	 * @return The type, which is "REFERENCE."
+	 */
 	@Override
 	public String getType() {
 		return "REFERENCE";

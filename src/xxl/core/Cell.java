@@ -68,7 +68,11 @@ public class Cell implements Serializable {
 		return _position;
 	}
 
-	// FIXME
+	/**
+	 * Retrieves the content stored in this cell.
+	 *
+	 * @return The {@link Content} stored in this cell.
+	 */
 	Content getContent() {
 		return _content;
 	}
@@ -83,12 +87,20 @@ public class Cell implements Serializable {
 		_functionManager.notifyFunctions();
 	}
 
-	// FIXME
+	/**
+	 * Retrieves the content type of this cell, which indicates the type of data or formula stored in the cell.
+	 *
+	 * @return A string representing the content type of the cell.
+	 */
 	String getContentType() {
 		return _content.getType();
 	}
 
-	// FIXME
+	/**
+	 * Retrieves the function manager associated with this cell, which manages any interval functions applied to the cell.
+	 *
+	 * @return The {@link FunctionManager} responsible for handling interval functions in this cell.
+	 */
 	FunctionManager getFunctionManager() {
 		return _functionManager;
 	}

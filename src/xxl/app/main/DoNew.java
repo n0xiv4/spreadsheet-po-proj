@@ -4,11 +4,7 @@ import pt.tecnico.uilib.forms.Form;
 import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
 
-import xxl.app.exception.FileOpenFailedException;
-import xxl.core.exception.MissingFileAssociationException;
 import xxl.core.Calculator;
-
-import java.io.IOException;
 
 /**
  * Open a new file.

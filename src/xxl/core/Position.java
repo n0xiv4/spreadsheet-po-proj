@@ -72,46 +72,6 @@ public class Position implements Serializable {
 	}
 
 	/**
-	 * Compares this {@link Position} with another {@link Position} for ordering. Returns a negative integer if this
-	 * position is before the specified position (in terms of rows), a positive integer if it's after the specified
-	 * position, and 0 if the positions are the same (both in rows and columns).
-	 *
-	 * @param position The {@link Position} to compare with.
-	 * @return A negative integer if this position is before the specified position, a positive integer if it's after,
-	 *         or 0 if the positions are the same.
-	 */
-	/*
-	public int compareTo(Position position) {
-		if (_row > position._row) {
-
-		}
-		if (_row < position._row) {
-			// A is before B in terms of rows
-			return -1;
-		} 
-		else if (_row > position._row) {
-			// A is after B in terms of rows
-			return 1;
-		} 
-		else {
-			// Rows are the same; compare columns
-			if (_column < position._column) {
-				// A is before B in terms of columns
-				return -1;
-			} 
-			else if (_column > position._column) {
-				// A is after B in terms of columns
-				return 1;
-			} 
-			else {
-				// Rows and columns are the same
-				return 0;
-			}
-		}
-	}
-	*/
-
-	/**
 	 * Gets the row value of this {@link Position}.
 	 *
 	 * @return The row value.
@@ -129,7 +89,12 @@ public class Position implements Serializable {
 		return _column;
 	}
 
-	// FIXME
+	/**
+	 * Checks if this position is on the same row as the specified position.
+	 *
+	 * @param toCompare The position to compare with.
+	 * @return {@code true} if this position and the specified position are on the same row, {@code false} otherwise.
+	 */
 	boolean onSameRow(Position toCompare) {
 		return _row == toCompare._row;
 	}

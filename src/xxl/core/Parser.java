@@ -46,18 +46,22 @@ class Parser {
 	Spreadsheet parseFile(String filename) throws IOException, UnrecognizedEntryException /* More Exceptions? */ {
 		try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
 			parseDimensions(reader);
-
 			String line;
-
 			while ((line = reader.readLine()) != null) {
 				parseLine(line);
 			}
 		}
-
 		return _spreadsheet;
 	}
 
-	// FIXME
+	/**
+	 * Parses the user-provided content specification and returns the corresponding Content object.
+	 *
+	 * @param contentSpecification The content specification provided by the user.
+	 * @return The parsed Content object.
+	 * @throws UnrecognizedEntryException if the contentSpecification cannot be recognized.
+	 * @throws InvalidFunctionException if the contentSpecification contains an invalid function.
+	 */
 	Content parseUserInput(String contentSpecification) throws UnrecognizedEntryException, InvalidFunctionException {
 		return parseContent(contentSpecification);
 	}
@@ -233,7 +237,14 @@ class Parser {
 			return parseLiteral(argExpression);
 	}
 
-	// FIXME javadoc
+	/**
+	 * Parses an interval function and its range description to create the corresponding Content object.
+	 *
+	 * @param functionName The name of the interval function to be parsed.
+	 * @param rangeDescription The description of the range or interval for the function.
+	 * @return The parsed Content object representing the interval function.
+	 * @throws InvalidFunctionException if the function cannot be parsed or is invalid.
+	 */
 	private Content parseIntervalFunction(String functionName, String rangeDescription) throws InvalidFunctionException {
 		try {
 			Interval interval = new Interval(rangeDescription, _spreadsheet);
