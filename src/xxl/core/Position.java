@@ -2,6 +2,8 @@ package xxl.core;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The {@code Position} class represents a two-dimensional position or coordinate
@@ -9,7 +11,7 @@ import java.io.Serializable;
  * 
  * @Serial 202310112120L
  */
-public class Position implements Serializable {
+public class Position implements Serializable, Comparable<Position> {
 	
 	/** The row coordinate. */
 	private int _row;
@@ -60,15 +62,42 @@ public class Position implements Serializable {
 		return false;
 	}
 
-	/**
-	 * Compares this {@link Position} with another {@link Position} to determine if they are equal.
-	 *
-	 * @param position The {@link Position} to compare with this one.
-	 * @return {@code true} if the provided {@link Position} has the same row and column
-	 *         coordinates as this one; {@code false} otherwise.
-	 */
-	public boolean equals(Position position) {
-		return _row == position.getRow() && _column == position.getColumn();
+	@Override
+	public boolean equals(Object obj) {
+		return hashCode() == obj.hashCode();
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 367;
+		hash = 401 * hash + _row;
+		hash = 401 * hash + _column;
+		return hash;
+	}
+
+	// FIXME
+	@Override
+    public int compareTo(Position other) {
+        // Compare first by row
+        int rowComparison = Integer.compare(this._row, other._row);
+
+        // If rows are the same, compare by column
+        if (rowComparison == 0) {
+            return Integer.compare(this._column, other._column);
+        }
+
+        return rowComparison;
+    }
+
+	// FIXME
+	public List<Position> getAllPositionsUpTo() {
+		List<Position> positions = new ArrayList<Position>();
+		for (int row = 1; row <= getRow(); row++) {
+			for (int col = 1; col <= getColumn(); col++) {
+				positions.add(new Position(row, col));
+			}
+		}
+		return positions;
 	}
 
 	/**

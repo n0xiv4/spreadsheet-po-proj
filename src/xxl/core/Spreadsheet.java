@@ -1,6 +1,6 @@
 package xxl.core;
 
-import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.ArrayList;
@@ -10,8 +10,12 @@ import java.io.Serializable;
 
 import xxl.core.exception.InvalidCellIntervalException;
 import xxl.core.exception.InvalidFunctionException;
-import xxl.core.exception.InvalidValueTypeException;
 import xxl.core.exception.UnrecognizedEntryException;
+
+import xxl.core.search.Search;
+
+import xxl.core.storage.TreeMapStorage;
+import xxl.core.storage.Storage;
 
 /**
  * The {@code Spreadsheet} class represents a grid-based spreadsheet with cells.
@@ -25,8 +29,8 @@ public class Spreadsheet implements Serializable {
 	/** The list where all the users of the Spreadsheet are stored. */
 	private List<User> _users;
 
-	/** The list that holds all the Cells that are a part of the Spreadsheet. */
-	private List<Cell> _cells;
+	/** FIXME */
+	private Storage<Cell> _storage;
 
 	/** The range of the Spreadsheet, represented as interval. */
 	private Interval _spreadsheetRange;
@@ -49,7 +53,7 @@ public class Spreadsheet implements Serializable {
 	 */
 	Spreadsheet(int rows, int columns) {
 		_users = new ArrayList<User>();
-		_cells = new ArrayList<Cell>();
+		_storage = new TreeMapStorage<Cell>();
 		_spreadsheetRange = new Interval(new Position(rows, columns), this);
 		_cutBuffer = new CutBuffer();
 
@@ -61,11 +65,9 @@ public class Spreadsheet implements Serializable {
 	 *
 	 * @param row the row of the cell to change 
 	 * @param column the column of the cell to change
-	 * @param contentSpecification the specification in a string format of the content to put
-	 *        in the specified cell.
 	 */
-	public void insertContent(int row, int column, Content contentSpecification) throws UnrecognizedEntryException {
-		getCellInPosition(new Position(row, column)).setContent(contentSpecification);
+	public void insertContent(int row, int column, Content contentSpecification) {
+		getCell(new Position(row, column)).setContent(contentSpecification);
 	}
 
 	/**
@@ -119,7 +121,7 @@ public class Spreadsheet implements Serializable {
 	 * Copies the content within the specified gamma range and stores it in the cut buffer for later use. The copied
 	 * content is determined by creating an interval from the provided gamma range and extracting the cells within it.
 	 *
-	 * @param gamma The gamma range coordinates in string format (e.g., "1;1:2;2" for an interval).
+	 * @param gamma The gamma range coordinates in string format (e.g., "1;1:2;1" for an interval).
 	 * @throws InvalidCellIntervalException if the provided gamma range is invalid or cannot be copied.
 	 */
 	public void copyGamma(String gamma) throws InvalidCellIntervalException {
@@ -157,7 +159,7 @@ public class Spreadsheet implements Serializable {
 	public void deleteGamma(String gamma) throws InvalidCellIntervalException {
 		Interval intervalToDelete = new Interval(gamma, this);
 		for (Position position: intervalToDelete.getPositions()) {
-			getCellInPosition(position).setContent(new LiteralNullValue());
+			getCell(position).setContent(new LiteralNullValue());
 		}
 	}
 
@@ -194,43 +196,12 @@ public class Spreadsheet implements Serializable {
 		return intervalToVisualize.readInterval();
 	}
 
-	/**
-	 * Visualizes cells that match the given value and returns them as a string.
-	 *
-	 * @param value The value to search for. If it starts with a single quote, it's treated as a String; otherwise, it's treated as an Integer.
-	 * @return A string containing the visual representation of matching cells, with the last newline character removed.
-	 */
-	public String visualizeValue(String value) {
-		/** A mutable version of a "String", so we can remove the last newline char. */
-		StringBuilder display = new StringBuilder();
-
-		if (value.charAt(0) == '\'') {
-			String strValue = value.substring(1);
-			display.append(findCellsByStringValue(strValue));
-		} 
-		else {
-			int intValue = Integer.parseInt(value);
-			display.append(findCellsByIntValue(intValue));
-		}
-		if (display.length() > 0) {
-			display.deleteCharAt(display.length() - 1); 
-		}
-
-		return display.toString();
-	}
-
-	/**
-	 * Visualizes cells containing a specified function by filtering and sorting them.
-	 *
-	 * @param function The function to search for.
-	 * @return A string representing the sorted cells.
-	 */
-	public String visualizeFunction(String function) {
-		List<Cell> foundCells = filterCellsByFunction(function);
-		sortCellsByContentType(foundCells);
+	// FIXME
+	public String search(Search searchType, String gammaToSearch) {
+		List<Cell> foundCells = searchType.search(this, gammaToSearch);
 		return displayCells(foundCells);
 	}
-
+	
 	/**
 	 * Visualizes the content of the cut buffer, if it exists. The method retrieves the cells from the cut buffer,
 	 * and if the cut buffer exists, it returns a string representation of the cells using the `displayCells` method.
@@ -245,6 +216,11 @@ public class Spreadsheet implements Serializable {
 			// No cutBuffer exists.
 			return "";
 		}
+	}
+
+	// FIXME
+	public Iterator<Cell> getCellIterator() {
+		return _storage.iterator();
 	}
 	
 	/**
@@ -300,29 +276,6 @@ public class Spreadsheet implements Serializable {
 	void flagAsUnchanged() {
 		_changed = false;
 	}
-
-	/**
-	 * Retrieves the value of a {@link Cell} at the specified {@link Position} within the spreadsheet.
-	 *
-	 * @param cellPosition The {@link Position} object representing the row and column coordinates
-	 *                     of the cell to retrieve the value from.
-	 * @return The value of the cell at the specified position, represented as a {@link Literal}.
-	 * @throws CellNotFoundException If no cell exists at the provided position in the spreadsheet.
-	 */
-	Literal getValueInPosition(Position cellPosition) {
-		return getCellInPosition(cellPosition).getValue();
-	}
-
-	/**
-	 * Retrieves the content of the cell at the specified position within the spreadsheet. This method gets the cell
-	 * at the given position and returns its content.
-	 *
-	 * @param cellPosition The position of the cell for which to retrieve the content.
-	 * @return The content of the cell at the specified position.
-	 */
-	Content getContentInPosition(Position cellPosition) {
-		return getCellInPosition(cellPosition).getContent();
-	}
 	
 	/**
 	 * Visualizes the {@link Content} of the {@link Cell} at the specified {@link Position}.
@@ -331,7 +284,7 @@ public class Spreadsheet implements Serializable {
 	 * @return A string representation of the content in the cell at the given {@link Position}.
 	 */
 	String visualizeCellInPosition(Position cellPosition) {
-		return getCellInPosition(cellPosition).toString();
+		return getCell(cellPosition).toString();
 	}
 
 	/**
@@ -347,23 +300,10 @@ public class Spreadsheet implements Serializable {
 		}
 	}
 
-	/**
-	 * Finds and returns a {@link Cell} within a collection of cells based on its position.
-	 * It's a private method so no Cells are returned (could result in a privacy leak, because
-	 * Cells aren't 100% immutable).
-	 *
-	 * @param cellPos The {@link Position} object representing the row and column coordinates
-	 *                to search for within the collection of cells.
-	 * @return The {@link Cell} with the specified position if found; {@code null} if no cell
-	 *         with the given position exists in the collection.
-	 */
-	private Cell getCellInPosition(Position cellPos) {
-		for (Cell cell: _cells) {
-			if (cell.getPosition().equals(cellPos)) {
-				return cell;
-			}
-		}
-		return null;
+	// FIXME
+	// go upper
+	public Cell getCell(Position position) {
+		return _storage.get(position);
 	}
 
 	/**
@@ -371,79 +311,9 @@ public class Spreadsheet implements Serializable {
 	 * Each cell is associated with a unique {@link Position}.
 	 */
 	private void populateSpreadsheet() {
-		int lastRow = _spreadsheetRange.getLastPosition().getRow();
-		int lastColumn = _spreadsheetRange.getLastPosition().getColumn();
-		for(int row = 1; row <= lastRow; row++) {
-			for(int column = 1; column <= lastColumn; column++) {
-				_cells.add(new Cell(row, column));
-			}
+		for (Position position: getLastPosition().getAllPositionsUpTo()) {
+			_storage.set(position, new Cell(position));
 		}
-	}
-
-	/**
-	 * Finds cells with String values that match the provided value and returns them as a string.
-	 *
-	 * @param strValue The String value to search for in the cells.
-	 * @return A string containing the visual representation of cells with matching String values.
-	 */
-	private String findCellsByStringValue(String strValue) {
-		StringBuilder display = new StringBuilder();
-		for (Cell cell : _cells) {
-			try {
-				if (cell.getValue().getStringValue().equals(strValue)) {
-					display.append(cell.toString()).append("\n");
-				}
-			} 
-			catch (InvalidValueTypeException e) {
-			}
-		}
-		return display.toString();
-	}
-	
-	
-	/**
-	 * Finds cells with Integer values that match the provided value and returns them as a string.
-	 *
-	 * @param intValue The Integer value to search for in the cells.
-	 * @return A string containing the visual representation of cells with matching Integer values.
-	 */
-	private String findCellsByIntValue(int intValue) {
-		StringBuilder display = new StringBuilder();
-		for (Cell cell : _cells) {
-			try {
-				if (cell.getValue().getIntValue() == intValue) {
-					display.append(cell.toString()).append("\n");
-				}
-			} 
-			catch (InvalidValueTypeException e) {
-			}
-		}
-		return display.toString();
-	}
-
-	/**
-	 * Filters cells that contain the specified function.
-	 *
-	 * @param function The function to search for.
-	 * @return A list of filtered cells.
-	 */
-	private List<Cell> filterCellsByFunction(String function) {
-		List<Cell> foundCells = new ArrayList<>();
-		for (Cell cell : _cells) {
-			if (cell.getContentType().contains(function)) {
-				foundCells.add(cell);
-			}
-		}
-		return foundCells;
-	}
-
-	/**
-	 * Sorts a list of cells by content type using a custom comparator.
-	 *
-	 * @param cells The list of cells to sort.
-	 */
-	private void sortCellsByContentType(List<Cell> cells) {
-		Collections.sort(cells, new ContentSort());
 	}
 
 	/**
@@ -474,7 +344,7 @@ public class Spreadsheet implements Serializable {
 		List<Cell> cells = new ArrayList<Cell>();
 		Spreadsheet intervalSpreadsheet = toRead.getLinkedSpreadsheet();
 		for (Position cellPosition: toRead.getPositions()) {
-			cells.add(intervalSpreadsheet.getCellInPosition(cellPosition));
+			cells.add(intervalSpreadsheet.getCell(cellPosition));
 		}
 		return cells;
 	}

@@ -20,6 +20,9 @@ import xxl.core.exception.UnrecognizedEntryException;
  */
 public class Calculator {
 
+	/** The singleton instance of the calculator. */
+	private static Calculator _instance;
+
 	/** The current spreadsheet being edited. */
 	private Spreadsheet _spreadsheet;
 	

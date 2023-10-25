@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.ArrayList;
 
 import xxl.core.exception.InvalidCellIntervalException;
-import xxl.core.exception.UnrecognizedEntryException;
 
 /**
  * The {@code Interval} class represents a rectangular interval or range of positions within a
@@ -188,12 +187,12 @@ public class Interval implements Serializable {
 		List<Content> contents = new ArrayList<Content>();
 		if (onSameRow()) {
 			for (int col = _firstPosition.getColumn(); col <= _lastPosition.getColumn(); col++) {
-				contents.add(_linkedSpreadsheet.getContentInPosition(new Position(getFirstPosition().getRow(), col)));
+				contents.add(_linkedSpreadsheet.getCell(new Position(getFirstPosition().getRow(), col)).getContent());
 			}
 		}
 		else {
 			for (int row = _firstPosition.getRow(); row <= _lastPosition.getRow(); row++) {
-				contents.add(_linkedSpreadsheet.getContentInPosition(new Position(row, getFirstPosition().getColumn())));
+				contents.add(_linkedSpreadsheet.getCell(new Position(row, getFirstPosition().getColumn())).getContent());
 			}
 		}
 		return contents;
@@ -216,12 +215,7 @@ public class Interval implements Serializable {
 	 */
 	void pasteContent(Content content) {
 		for (Position position: getPositions()) {
-			try {
-				_linkedSpreadsheet.insertContent(position.getRow(), position.getColumn(), content);
-			} 
-			catch (UnrecognizedEntryException e) {
-				// Won't happen - this exception would already have been handled by the program in importFile
-			}
+			_linkedSpreadsheet.insertContent(position.getRow(), position.getColumn(), content);
 		}
 	}
 
@@ -239,9 +233,6 @@ public class Interval implements Serializable {
 			Position currPosition = positions.get(index);
 			try {
 				_linkedSpreadsheet.insertContent(currPosition.getRow(), currPosition.getColumn(), cell.getContent());
-			}
-			catch (UnrecognizedEntryException e) {
-				// Won't happen - this exception would already have been handled by the program in importFile
 			}
 			catch (NullPointerException e) {
 				// Will happen if our position is out of bounds. That's no issue - we'll just ignore that insertContent
@@ -349,12 +340,7 @@ public class Interval implements Serializable {
 		int index = 0;		
 		for (Content content : toCopy.getContent()) {
 			Position currPosition = positions.get(index);
-			try {
-				_linkedSpreadsheet.insertContent(currPosition.getRow(), currPosition.getColumn(), content);
-			} 
-			catch (UnrecognizedEntryException e) {
-				// Won't happen - this exception would already have been handled by the program in importFile
-			}
+			_linkedSpreadsheet.insertContent(currPosition.getRow(), currPosition.getColumn(), content);
 			index++;
 		}
 	}

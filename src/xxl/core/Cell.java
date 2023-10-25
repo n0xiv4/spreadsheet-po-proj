@@ -64,7 +64,7 @@ public class Cell implements Serializable {
 	 *
 	 * @return A new {@link Position} object representing the row and column coordinates of this cell.
 	 */
-	Position getPosition() {
+	public Position getPosition() {
 		return _position;
 	}
 
@@ -73,7 +73,7 @@ public class Cell implements Serializable {
 	 *
 	 * @return The {@link Content} stored in this cell.
 	 */
-	Content getContent() {
+	public Content getContent() {
 		return _content;
 	}
 
@@ -92,7 +92,8 @@ public class Cell implements Serializable {
 	 *
 	 * @return A string representing the content type of the cell.
 	 */
-	String getContentType() {
+	// FIXME
+	public String getContentType() {
 		return _content.getType();
 	}
 
@@ -110,7 +111,8 @@ public class Cell implements Serializable {
 	 *
 	 * @return The value of the cell's content as a {@link Literal}.
 	 */
-	Literal getValue() {
+	// FIXME
+	public Literal getValue() {
 		return _content.getValue();
 	}
 }

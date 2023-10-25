@@ -67,6 +67,6 @@ public class Reference extends Content {
 	 * @return The value of the referenced cell as a {@link Literal}.
 	 */
 	Literal getValue() {
-		return _spreadsheet.getValueInPosition(_referencePosition);
+		return _spreadsheet.getCell(_referencePosition).getValue();
 	}
 }
