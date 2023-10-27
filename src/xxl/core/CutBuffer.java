@@ -35,4 +35,5 @@ public class CutBuffer implements Serializable {
     List<Cell> getCells() {
         return _storedCells;
     }
+    
 }

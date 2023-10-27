@@ -2,6 +2,14 @@ package xxl.core;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import xxl.core.content.Content;
+import xxl.core.content.Observer;
+import xxl.core.content.literal.Literal;
+import xxl.core.content.literal.LiteralNull;
+import xxl.core.content.literal.LiteralNullValue;
 
 /**
  * The {@code Cell} class represents a cell in a spreadsheet.
@@ -18,8 +26,8 @@ public class Cell implements Serializable {
 	/** The position (row and column coordinates) of the cell. */
 	private Position _position;
 
-	/** The function manager (used for notificating changes to the content). */
-	private FunctionManager _functionManager;
+	/** The list of observers of the cell. Naturally they are updated after changes. */
+	private List<Observer> _observers;
 
 	/** The serial version UID for object serialization. */
 	@Serial
@@ -32,10 +40,10 @@ public class Cell implements Serializable {
 	 * @param row    The row of the new cell.
 	 * @param column The column of the new cell.
 	 */
-	Cell(int row, int column) {
+	public Cell(int row, int column) {
 		_position = new Position(row, column);
 		_content = new LiteralNullValue();
-		_functionManager = new FunctionManager();
+		_observers = new ArrayList<Observer>();
 	}
 
 	/**
@@ -44,19 +52,10 @@ public class Cell implements Serializable {
 	 *
 	 * @param position The {@link Position} object representing the row and column coordinates.
 	 */
-	Cell(Position position) {
+	public Cell(Position position) {
 		_position = position;
 		_content = new LiteralNullValue();
-		_functionManager = new FunctionManager();
-	}
-
-	/**
-	 * Returns a string representation of the cell, including its position and content.
-	 *
-	 * @return A string in the format "row;column|content".
-	 */
-	public String toString() {
-		return _position.toString() + "|" + _content.toString();
+		_observers = new ArrayList<Observer>();
 	}
 
 	/**
@@ -78,32 +77,13 @@ public class Cell implements Serializable {
 	}
 
 	/**
-	 * Sets the content for the cell.
+	 * Returns a string representation of the cell, including its position and content.
 	 *
-	 * @param content The type of content to be set in the cell.
+	 * @return A string in the format "row;column|content".
 	 */
-	void setContent(Content content) {
-		_content = content;
-		_functionManager.notifyFunctions();
-	}
-
-	/**
-	 * Retrieves the content type of this cell, which indicates the type of data or formula stored in the cell.
-	 *
-	 * @return A string representing the content type of the cell.
-	 */
-	// FIXME
-	public String getContentType() {
-		return _content.getType();
-	}
-
-	/**
-	 * Retrieves the function manager associated with this cell, which manages any interval functions applied to the cell.
-	 *
-	 * @return The {@link FunctionManager} responsible for handling interval functions in this cell.
-	 */
-	FunctionManager getFunctionManager() {
-		return _functionManager;
+	@Override
+	public String toString() {
+		return _position.toString() + "|" + _content.toString();
 	}
 
 	/**
@@ -111,8 +91,45 @@ public class Cell implements Serializable {
 	 *
 	 * @return The value of the cell's content as a {@link Literal}.
 	 */
-	// FIXME
 	public Literal getValue() {
 		return _content.getValue();
 	}
+
+	/**
+	 * Adds an observer to the cell's list of observers.
+	 *
+	 * @param observer The observer to be added to the list of observers.
+	 */
+	public void addObserver(Observer observer) {
+		_observers.add(observer);
+	}
+
+	/**
+	 * Removes an observer from the cell's list of observers.
+	 *
+	 * @param observer The observer to be removed from the list of observers.
+	 */
+	public void removeObserver(Observer observer) {
+		_observers.remove(observer);
+	}
+
+	/**
+	 * Notifies all registered observers about changes in the cell's state.
+	 */
+	public void notifyObservers() {
+		for (Observer observer: _observers) {
+			observer.update();
+		}
+	}
+
+	/**
+	 * Sets the content for the cell.
+	 *
+	 * @param content The type of content to be set in the cell.
+	 */
+	void setContent(Content content) {
+		_content = content;
+		notifyObservers();
+	}
+
 }

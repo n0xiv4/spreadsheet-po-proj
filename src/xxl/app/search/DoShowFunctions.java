@@ -4,8 +4,7 @@ import pt.tecnico.uilib.forms.Form;
 import pt.tecnico.uilib.menus.Command;
 
 import xxl.core.Spreadsheet;
-
-import xxl.core.search.FunctionSearch;
+import xxl.core.search.FunctionSearchStrategy;
 
 /**
  * Command for searching function names.
@@ -18,6 +17,6 @@ class DoShowFunctions extends Command<Spreadsheet> {
 
 	@Override
 	protected final void execute() {
-		_display.popup(_receiver.search(new FunctionSearch(), Form.requestString(Message.searchFunction())));
+		_display.popup(_receiver.search(new FunctionSearchStrategy(), Form.requestString(Message.searchFunction())));
 	}
 }

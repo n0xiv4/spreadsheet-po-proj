@@ -6,6 +6,7 @@ import pt.tecnico.uilib.menus.CommandException;
 
 import xxl.app.exception.InvalidCellRangeException;
 import xxl.app.exception.UnknownFunctionException;
+
 import xxl.core.Spreadsheet;
 import xxl.core.exception.InvalidCellIntervalException;
 import xxl.core.exception.InvalidFunctionException;

@@ -3,8 +3,11 @@ package xxl.core;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.ArrayList;
 
+import xxl.core.content.Content;
+import xxl.core.content.Observer;
 import xxl.core.exception.InvalidCellIntervalException;
 
 /**
@@ -37,7 +40,7 @@ public class Interval implements Serializable {
 	 * @param lastPosition  The {@link Position} of the last cell in the interval.
 	 * @param spreadsheet   The {@link Spreadsheet} to which this interval is associated.
 	 */
-	Interval(Position firstPosition, Position lastPosition, Spreadsheet spreadsheet) {
+	public Interval(Position firstPosition, Position lastPosition, Spreadsheet spreadsheet) {
 		_firstPosition = firstPosition;
 		_lastPosition = lastPosition;
 		_linkedSpreadsheet = spreadsheet;
@@ -51,7 +54,7 @@ public class Interval implements Serializable {
 	 * @param lastPosition  The {@link Position} of the last cell in the interval.
 	 * @param spreadsheet   The {@link Spreadsheet} to which this interval is associated.
 	 */
-	Interval(Position lastPosition, Spreadsheet spreadsheet) {
+	public Interval(Position lastPosition, Spreadsheet spreadsheet) {
 		_firstPosition = new Position(1, 1);
 		_lastPosition = lastPosition;
 		_linkedSpreadsheet = spreadsheet;
@@ -66,7 +69,7 @@ public class Interval implements Serializable {
 	 * @param spreadsheet The {@link Spreadsheet} to which this interval is associated.
 	 * @throws InvalidCellIntervalException if the provided gamma range does not make a valid Interval.
 	 */
-	Interval(String gamma, Spreadsheet spreadsheet) throws InvalidCellIntervalException {
+	public Interval(String gamma, Spreadsheet spreadsheet) throws InvalidCellIntervalException {
 		Position[] intervalPositions = parsePositions(gamma);
 		_firstPosition = intervalPositions[0];
 		_lastPosition = intervalPositions[1];
@@ -82,7 +85,7 @@ public class Interval implements Serializable {
 	 *
 	 * @param toCopy The interval to copy content from.
 	 */
-	Interval(Interval toCopy) {
+	public Interval(Interval toCopy) {
 		int newSheetRows = calculateNewSheetRows(toCopy);
 		int newSheetColumns = calculateNewSheetColumns(toCopy);
 	
@@ -121,18 +124,58 @@ public class Interval implements Serializable {
 		return interval;
 	}
 
-	public String toString() {
-		return _firstPosition.toString() + ":" + _lastPosition.toString();
-	}
-
 	/**
 	 * Checks if the interval is inside the spreadsheet's range.
 	 *
 	 * @return {@code true} if the last position is inside the spreadsheet's range; {@code false} otherwise.
 	 */
 	public boolean isInsideSpreadsheet() {
-		return (_lastPosition.getRow() <= _linkedSpreadsheet.getLastPosition().getRow() 
-		&& _lastPosition.getColumn() <= _linkedSpreadsheet.getLastPosition().getColumn());
+		return _lastPosition.isInsideSpreadsheet(_linkedSpreadsheet);
+	}
+
+	/**
+	 * Adds an observer to all cells within the interval and updates references within the cells.
+	 *
+	 * @param observer The observer to be added to the cells.
+	 */
+	public void addObserverToCells(Observer observer) {
+		ReferenceUpdateVisitor referenceUpdateVisitor = new ReferenceUpdateVisitor();
+		for (Cell cell: getCells()) {
+			cell.addObserver(observer);
+			cell.getContent().accept(referenceUpdateVisitor, observer);
+		}
+	}
+
+	/**
+	 * Retrieves a list of cells based on the positions obtained from this object.
+	 *
+	 * @return A list of cells corresponding to the positions.
+	 */
+	public List<Cell> getCells() {
+		List<Cell> cells = new ArrayList<Cell>();
+		for (Position position: getPositions()) {
+			cells.add(_linkedSpreadsheet.getCell(position));
+		}
+		return cells;
+	}
+
+	/**
+	 * Retrieves a list of content elements from the cells obtained from this object.
+	 *
+	 * @return A list of content elements derived from the cells.
+	 */
+	public List<Content> getContent() {
+		return getCells().stream().map(cell -> cell.getContent()).collect(Collectors.toList());
+	}
+
+	/**
+	 * Returns a string representation of the range, including its first and last positions.
+	 *
+	 * @return A string representation in the format "firstPosition:lastPosition."
+	 */
+	@Override
+	public String toString() {
+		return _firstPosition.toString() + ":" + _lastPosition.toString();
 	}
 
 	/**
@@ -178,27 +221,6 @@ public class Interval implements Serializable {
 	}
 
 	/**
-	 * Retrieves a list of content objects within the interval. The content within the interval can span
-	 * multiple rows or columns, and this method collects all the content in that range.
-	 *
-	 * @return A list of {@link Content} objects representing the content within the interval.
-	 */
-	List<Content> getContent() {
-		List<Content> contents = new ArrayList<Content>();
-		if (onSameRow()) {
-			for (int col = _firstPosition.getColumn(); col <= _lastPosition.getColumn(); col++) {
-				contents.add(_linkedSpreadsheet.getCell(new Position(getFirstPosition().getRow(), col)).getContent());
-			}
-		}
-		else {
-			for (int row = _firstPosition.getRow(); row <= _lastPosition.getRow(); row++) {
-				contents.add(_linkedSpreadsheet.getCell(new Position(row, getFirstPosition().getColumn())).getContent());
-			}
-		}
-		return contents;
-	}
-
-	/**
 	 * Retrieves the associated spreadsheet linked to this interval.
 	 *
 	 * @return The {@link Spreadsheet} to which this interval is associated.
@@ -215,7 +237,7 @@ public class Interval implements Serializable {
 	 */
 	void pasteContent(Content content) {
 		for (Position position: getPositions()) {
-			_linkedSpreadsheet.insertContent(position.getRow(), position.getColumn(), content);
+			_linkedSpreadsheet.insertContent(position, content);
 		}
 	}
 
@@ -232,7 +254,7 @@ public class Interval implements Serializable {
 		for (Cell cell: cells) {
 			Position currPosition = positions.get(index);
 			try {
-				_linkedSpreadsheet.insertContent(currPosition.getRow(), currPosition.getColumn(), cell.getContent());
+				_linkedSpreadsheet.insertContent(currPosition, cell.getContent());
 			}
 			catch (NullPointerException e) {
 				// Will happen if our position is out of bounds. That's no issue - we'll just ignore that insertContent
@@ -250,16 +272,6 @@ public class Interval implements Serializable {
 	boolean isSingle() {
 		return (_firstPosition.getRow() == _lastPosition.getRow()) 
 				&& (_firstPosition.getColumn() == _lastPosition.getColumn());
-	}
-
-	/**
-	 * Adds an interval function to all cells within the current interval. This method associates the interval function
-	 * with all cells within the interval so that updates in the cells trigger the function's recalculation.
-	 *
-	 * @param function The {@link IntervalFunction} to be associated with the cells within the interval.
-	 */
-	void addFunctionToCells(IntervalFunction function) {
-		_linkedSpreadsheet.addFunctionToInterval(this, function);
 	}
 
 	/**
@@ -337,11 +349,12 @@ public class Interval implements Serializable {
 	 */
 	private void copyContent(Interval toCopy) {
 		List<Position> positions = getPositions();
-		int index = 0;		
-		for (Content content : toCopy.getContent()) {
+		int index = 0;
+		for (Content content: toCopy.getContent()) {
 			Position currPosition = positions.get(index);
-			_linkedSpreadsheet.insertContent(currPosition.getRow(), currPosition.getColumn(), content);
+			_linkedSpreadsheet.insertContent(currPosition, content);
 			index++;
 		}
 	}
+
 }

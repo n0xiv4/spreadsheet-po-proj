@@ -7,12 +7,13 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
 import java.util.Map;
-import java.util.HashMap;
 
 import xxl.core.exception.ImportFileException;
 import xxl.core.exception.MissingFileAssociationException;
 import xxl.core.exception.UnavailableFileException;
 import xxl.core.exception.UnrecognizedEntryException;
+
+import java.util.HashMap;
 
 /**
  * The {@code Calculator} class represents a spreadsheet application that allows users to work with spreadsheets.
@@ -40,11 +41,23 @@ public class Calculator {
 	 * The "root" user is set as the active user, and it is added to the list of users.
 	 * This constructor is responsible for creating the initial state of the calculator.
 	 */
-	public Calculator() {
+	private Calculator() {
 		User rootUser = new User("root");
 		_activeUser = rootUser;
 		_users = new HashMap<Integer, User>();
 		_users.put(rootUser.hashCode(), rootUser);
+	}
+
+	/**
+	 * Gets the single instance of the `Calculator` class.
+	 *
+	 * @return The instance of the Calculator.
+	 */
+	public static Calculator getInstance() {
+		if (_instance == null) {
+			_instance = new Calculator();
+		}
+		return _instance;
 	}
 	
 	/**
@@ -198,4 +211,5 @@ public class Calculator {
 	public boolean isCurrentSpreadsheetChanged() {
 		return _spreadsheet.isChanged();
 	}
+	
 }

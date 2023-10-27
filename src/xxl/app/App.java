@@ -1,6 +1,8 @@
 package xxl.app;
 
 import pt.tecnico.uilib.Dialog;
+
+import xxl.core.Calculator;
 import xxl.core.exception.ImportFileException;
 
 /**
@@ -9,7 +11,7 @@ import xxl.core.exception.ImportFileException;
 public class App {
 	public static void main(String[] args) {
 		try (var ui = Dialog.UI) {
-			var receiver = new xxl.core.Calculator();
+			var receiver = Calculator.getInstance();
 			String datafile = System.getProperty("import");
 			if (datafile != null) {
 				try {
@@ -19,7 +21,6 @@ public class App {
 					e.printStackTrace();
 				}
 			}
-			
 			(new xxl.app.main.Menu(receiver)).open();
 		}
 	}

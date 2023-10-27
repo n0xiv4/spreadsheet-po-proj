@@ -2,18 +2,17 @@ package xxl.core;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.ArrayList;
 
 import java.io.Serial;
 import java.io.Serializable;
 
+import xxl.core.content.Content;
+import xxl.core.content.literal.LiteralNullValue;
 import xxl.core.exception.InvalidCellIntervalException;
 import xxl.core.exception.InvalidFunctionException;
 import xxl.core.exception.UnrecognizedEntryException;
-
-import xxl.core.search.Search;
-
+import xxl.core.search.SearchStrategy;
 import xxl.core.storage.TreeMapStorage;
 import xxl.core.storage.Storage;
 
@@ -29,7 +28,7 @@ public class Spreadsheet implements Serializable {
 	/** The list where all the users of the Spreadsheet are stored. */
 	private List<User> _users;
 
-	/** FIXME */
+	/** Stores the cells and positions of the spreadsheet. */
 	private Storage<Cell> _storage;
 
 	/** The range of the Spreadsheet, represented as interval. */
@@ -66,43 +65,8 @@ public class Spreadsheet implements Serializable {
 	 * @param row the row of the cell to change 
 	 * @param column the column of the cell to change
 	 */
-	public void insertContent(int row, int column, Content contentSpecification) {
-		getCell(new Position(row, column)).setContent(contentSpecification);
-	}
-
-	/**
-	 * Inserts the content of the given list of cells into the specified initial position.
-	 * This happens when the user input Interval has a single position only.
-	 *
-	 * @param initialPosition The initial position where the content will be inserted.
-	 * @param cells The list of cells to insert.
-	 */
-	private void insertContentInPosition(Position initialPosition, List<Cell> cells) {
-		Position firstCellPosition = cells.get(0).getPosition();
-		Position lastCellPosition = cells.get(cells.size() - 1).getPosition();
-		
-		int rowDifference = lastCellPosition.getRow() - firstCellPosition.getRow();
-		int colDifference = lastCellPosition.getColumn() - firstCellPosition.getColumn();
-		
-		Position finalPosition;
-		
-		// If the cutBuffer is on the same row
-		if (firstCellPosition.getRow() == lastCellPosition.getRow()) {
-			finalPosition = new Position(
-				initialPosition.getRow() + rowDifference,
-				initialPosition.getColumn() + colDifference
-			);
-		}
-		// If the cutBuffer is on the same column
-		else {
-			finalPosition = new Position(
-				initialPosition.getRow() + rowDifference,
-				initialPosition.getColumn() + rowDifference
-			);
-		}
-		
-		Interval toPaste = new Interval(initialPosition, finalPosition, this);
-		toPaste.pasteContent(cells);
+	public void insertContent(Position position, Content contentSpecification) {
+		getCell(position).setContent(contentSpecification);
 	}
 
 	/**
@@ -126,7 +90,7 @@ public class Spreadsheet implements Serializable {
 	 */
 	public void copyGamma(String gamma) throws InvalidCellIntervalException {
 		Interval intervalToCopy = new Interval(gamma, this);
-		_cutBuffer.setCutBuffer(getCellsFromInterval(new Interval(intervalToCopy)));
+		_cutBuffer.setCutBuffer(new Interval(intervalToCopy).getCells());
 	}
 
 	/**
@@ -140,9 +104,11 @@ public class Spreadsheet implements Serializable {
 	 */
 	public void pasteGamma(String gamma) throws InvalidCellIntervalException {
 		Interval intervalToPaste = new Interval(gamma, this);
+		// When the gamma where to paste has only a single Cell
 		if (_cutBuffer.getCells().size() > 1 && intervalToPaste.isSingle()) {
-			insertContentInPosition(intervalToPaste.getFirstPosition(), _cutBuffer.getCells());
+			pasteContentInPosition(intervalToPaste.getFirstPosition(), _cutBuffer.getCells());
 		}
+		// When the gamma has more than one Cell
 		else {
 			intervalToPaste.pasteContent(_cutBuffer.getCells());
 		}
@@ -177,7 +143,7 @@ public class Spreadsheet implements Serializable {
 	public void insertGamma(String gamma, String contentSpecification) throws InvalidCellIntervalException, InvalidFunctionException, UnrecognizedEntryException {
 		// convert contentSpecification to a Content instance
 		Parser lineParser = new Parser(this);
-		Content contentToInsert = lineParser.parseUserInput(contentSpecification);
+		Content contentToInsert = lineParser.parseContentInput(contentSpecification);
 
 		// get Interval where to insert and do it
 		Interval intervalToInsert = new Interval(gamma, this);
@@ -196,12 +162,18 @@ public class Spreadsheet implements Serializable {
 		return intervalToVisualize.readInterval();
 	}
 
-	// FIXME
-	public String search(Search searchType, String gammaToSearch) {
-		List<Cell> foundCells = searchType.search(this, gammaToSearch);
+	/**
+	 * Performs a search operation using the specified search strategy.
+	 *
+	 * @param searchType The search strategy to use for searching.
+	 * @param toSearch The string to search for.
+	 * @return A list of cells that match the search criteria.
+	 */
+	public String search(SearchStrategy searchType, String toSearch) {
+		List<Cell> foundCells = searchType.search(this, toSearch);
 		return displayCells(foundCells);
 	}
-	
+
 	/**
 	 * Visualizes the content of the cut buffer, if it exists. The method retrieves the cells from the cut buffer,
 	 * and if the cut buffer exists, it returns a string representation of the cells using the `displayCells` method.
@@ -209,16 +181,24 @@ public class Spreadsheet implements Serializable {
 	 * @return A string representing the content of the cut buffer or an empty string if the cut buffer does not exist.
 	 */
 	public String visualizeCutBuffer() {
-		try {
-			return displayCells(_cutBuffer.getCells());
-		}
-		catch (NullPointerException e) {
-			// No cutBuffer exists.
-			return "";
-		}
+		return displayCells(_cutBuffer.getCells());
 	}
 
-	// FIXME
+	/**
+	 * Retrieves the cell at the specified position.
+	 *
+	 * @param position The position of the cell to retrieve.
+	 * @return The cell at the given position.
+	 */
+	public Cell getCell(Position position) {
+		return _storage.get(position);
+	}
+	
+	/**
+	 * Retrieves an iterator for the cells stored in this data structure.
+	 *
+	 * @return An iterator over the cells stored in this data structure.
+	 */
 	public Iterator<Cell> getCellIterator() {
 		return _storage.iterator();
 	}
@@ -251,7 +231,7 @@ public class Spreadsheet implements Serializable {
 	public List<Cell> getCutBuffer() {
 		return _cutBuffer.getCells();
 	}
-	
+
 	/**
 	 * Checks if the spreadsheet range has been changed.
 	 *
@@ -288,25 +268,6 @@ public class Spreadsheet implements Serializable {
 	}
 
 	/**
-	 * Adds a function to all cells within the specified interval. This method iterates through the cells within the given
-	 * interval and adds the specified function to the function manager of each cell.
-	 *
-	 * @param interval  The interval for which to add the function to its cells.
-	 * @param function  The function to be added to the cells within the interval.
-	 */
-	void addFunctionToInterval(Interval interval, IntervalFunction function) {
-		for (Cell cell: getCellsFromInterval(interval)) {
-			cell.getFunctionManager().addFunction(function);
-		}
-	}
-
-	// FIXME
-	// go upper
-	public Cell getCell(Position position) {
-		return _storage.get(position);
-	}
-
-	/**
 	 * Populates the {@code Spreadsheet} with cells based on the specified number of rows and columns.
 	 * Each cell is associated with a unique {@link Position}.
 	 */
@@ -324,8 +285,8 @@ public class Spreadsheet implements Serializable {
 	 */
 	private String displayCells(List<Cell> cells) {
 		StringBuilder display = new StringBuilder();
-		for (Cell sCell : cells) {
-			display.append(sCell).append("\n");
+		for (Cell cell: cells) {
+			display.append(cell).append("\n");
 		}
 		if (display.length() > 0) {
 			display.deleteCharAt(display.length() - 1);
@@ -334,30 +295,37 @@ public class Spreadsheet implements Serializable {
 	}
 
 	/**
-	 * Retrieves a list of cells within the specified interval. This method extracts cells from the given interval
-	 * and returns them as a list of cell objects.
+	 * Pastes the content of the given list of cells into the specified initial position.
+	 * This happens when the user input Interval has a single position only.
 	 *
-	 * @param toRead The interval from which to retrieve cells.
-	 * @return A list of cells within the specified interval.
+	 * @param initialPosition The initial position where the content will be inserted.
+	 * @param cells The list of cells to insert.
 	 */
-	private List<Cell> getCellsFromInterval(Interval toRead) {
-		List<Cell> cells = new ArrayList<Cell>();
-		Spreadsheet intervalSpreadsheet = toRead.getLinkedSpreadsheet();
-		for (Position cellPosition: toRead.getPositions()) {
-			cells.add(intervalSpreadsheet.getCell(cellPosition));
+	private void pasteContentInPosition(Position initialPosition, List<Cell> cells) {
+		Position firstCellPosition = cells.get(0).getPosition();
+		Position lastCellPosition = cells.get(cells.size() - 1).getPosition();
+		
+		int rowDifference = lastCellPosition.getRow() - firstCellPosition.getRow();
+		int colDifference = lastCellPosition.getColumn() - firstCellPosition.getColumn();
+		
+		Position finalPosition;
+		
+		// If the cutBuffer is on the same row
+		if (firstCellPosition.getRow() == lastCellPosition.getRow()) {
+			finalPosition = new Position(
+				initialPosition.getRow() + rowDifference,
+				initialPosition.getColumn() + colDifference
+			);
 		}
-		return cells;
-	}
-
-	/**
-	 * Converts a list of cells into a list of their associated contents. This method takes a list of cells and returns
-	 * a list of the content objects associated with each cell in the same order.
-	 *
-	 * @param cells The list of cells to be converted into content objects.
-	 * @return A list of content objects corresponding to the content of the input cells.
-	 */
-	List<Content> convertCellListToContentList(List<Cell> cells) {
-		// for each Cell in the list, we get its content
-		return cells.stream().map(cell -> cell.getContent()).collect(Collectors.toList());
+		// If the cutBuffer is on the same column
+		else {
+			finalPosition = new Position(
+				initialPosition.getRow() + rowDifference,
+				initialPosition.getColumn() + rowDifference
+			);
+		}
+		
+		Interval toPaste = new Interval(initialPosition, finalPosition, this);
+		toPaste.pasteContent(cells);
 	}
 }

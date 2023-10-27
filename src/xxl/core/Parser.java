@@ -5,6 +5,20 @@ import java.io.FileReader;
 import java.io.BufferedReader;
 
 import xxl.app.exception.UnknownFunctionException;
+import xxl.core.content.Content;
+import xxl.core.content.Reference;
+import xxl.core.content.function.AddFunction;
+import xxl.core.content.function.AverageFunction;
+import xxl.core.content.function.CoalesceFunction;
+import xxl.core.content.function.ConcatFunction;
+import xxl.core.content.function.DivFunction;
+import xxl.core.content.function.Function;
+import xxl.core.content.function.MulFunction;
+import xxl.core.content.function.ProductFunction;
+import xxl.core.content.function.SubFunction;
+import xxl.core.content.literal.Literal;
+import xxl.core.content.literal.LiteralInteger;
+import xxl.core.content.literal.LiteralString;
 import xxl.core.exception.InvalidCellIntervalException;
 import xxl.core.exception.InvalidFunctionException;
 import xxl.core.exception.UnrecognizedEntryException;
@@ -15,7 +29,7 @@ import xxl.core.exception.UnrecognizedEntryException;
  * It includes methods for parsing dimensions, lines, and content expressions.
  * Additionally, it handles the interpretation of functions and literals.
  */
-class Parser {
+public class Parser {
 
 	/** The spreadsheet to parse to. */
 	private Spreadsheet _spreadsheet;
@@ -23,7 +37,7 @@ class Parser {
 	/**
 	 * Constructs a new Parser instance with no associated Spreadsheet.
 	 */
-	Parser() {
+	public Parser() {
 	}
 
 	/**
@@ -31,7 +45,7 @@ class Parser {
 	 *
 	 * @param spreadsheet The Spreadsheet object to associate with this Parser.
 	 */
-	Parser(Spreadsheet spreadsheet) {
+	public Parser(Spreadsheet spreadsheet) {
 		_spreadsheet = spreadsheet;
 	}
 
@@ -43,7 +57,7 @@ class Parser {
 	 * @throws IOException If an I/O error occurs while reading the file.
 	 * @throws UnrecognizedEntryException if an unrecognized entry is encountered during parsing.
 	 */
-	Spreadsheet parseFile(String filename) throws IOException, UnrecognizedEntryException /* More Exceptions? */ {
+	public Spreadsheet parseFile(String filename) throws IOException, UnrecognizedEntryException /* More Exceptions? */ {
 		try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
 			parseDimensions(reader);
 			String line;
@@ -62,8 +76,19 @@ class Parser {
 	 * @throws UnrecognizedEntryException if the contentSpecification cannot be recognized.
 	 * @throws InvalidFunctionException if the contentSpecification contains an invalid function.
 	 */
-	Content parseUserInput(String contentSpecification) throws UnrecognizedEntryException, InvalidFunctionException {
+	public Content parseContentInput(String contentSpecification) throws UnrecognizedEntryException, InvalidFunctionException {
 		return parseContent(contentSpecification);
+	}
+
+	/**
+	 * Parses a literal specification provided as a string to create a Literal object.
+	 *
+	 * @param literalSpecification The string representation of the literal to be parsed.
+	 * @return The parsed Literal object.
+	 * @throws UnrecognizedEntryException If the provided literal specification is not recognized.
+	 */
+	public Literal parseLiteralInput(String literalSpecification) throws UnrecognizedEntryException {
+		return parseLiteral(literalSpecification);
 	}
 
 	/**
@@ -113,7 +138,8 @@ class Parser {
 		if (components.length == 2) {
 			String[] address = components[0].split(";");
 			Content content = parseContent(components[1]);
-			_spreadsheet.insertContent(Integer.parseInt(address[0]), Integer.parseInt(address[1]), content);
+			Position cellPosition = new Position(Integer.parseInt(address[0]), Integer.parseInt(address[1]));
+			_spreadsheet.insertContent(cellPosition, content);
 		}
 		else {
 			throw new UnrecognizedEntryException("Wrong format in line: " + line);
