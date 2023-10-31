@@ -252,11 +252,11 @@ public class Interval implements Serializable {
 		List<Position> positions = getPositions();
 		int index = 0;		
 		for (Cell cell: cells) {
-			Position currPosition = positions.get(index);
 			try {
+				Position currPosition = positions.get(index);
 				_linkedSpreadsheet.insertContent(currPosition, cell.getContent());
 			}
-			catch (NullPointerException e) {
+			catch (NullPointerException | IndexOutOfBoundsException e) {
 				// Will happen if our position is out of bounds. That's no issue - we'll just ignore that insertContent
 			}
 			index++;

@@ -108,8 +108,8 @@ public class Spreadsheet implements Serializable {
 		if (_cutBuffer.getCells().size() > 1 && intervalToPaste.isSingle()) {
 			pasteContentInPosition(intervalToPaste.getFirstPosition(), _cutBuffer.getCells());
 		}
-		// When the gamma has more than one Cell
-		else {
+		// Pastes it. Only if the interval is the same size of the cutBuffer
+		else if (intervalToPaste.getPositions().size() == getCutBuffer().size()) {
 			intervalToPaste.pasteContent(_cutBuffer.getCells());
 		}
 	}
@@ -181,7 +181,13 @@ public class Spreadsheet implements Serializable {
 	 * @return A string representing the content of the cut buffer or an empty string if the cut buffer does not exist.
 	 */
 	public String visualizeCutBuffer() {
-		return displayCells(_cutBuffer.getCells());
+		try {
+			return displayCells(_cutBuffer.getCells());
+		}
+		catch (NullPointerException e) {
+			// If there are no cells inside the cutBuffer, there is no cutBuffer to show
+			return "";
+		}
 	}
 
 	/**
@@ -202,15 +208,14 @@ public class Spreadsheet implements Serializable {
 	public Iterator<Cell> getCellIterator() {
 		return _storage.iterator();
 	}
-	
+
 	/**
-	 * Links a {@link User} to the spreadsheet.
+	 * Retrieves the list of users associated with the spreadsheet.
 	 *
-	 * @param user The {@link User} to link with the spreadsheet.
+	 * @return A list of {@link User} objects representing the users associated with this spreadsheet.
 	 */
-	public void linkUser(User user) {
-		user.linkSpreadsheet(this);
-		_users.add(user);
+	public List<User> getUsers() {
+		return _users;
 	}
 
 	/**
@@ -220,6 +225,16 @@ public class Spreadsheet implements Serializable {
 	 */
 	public Position getLastPosition() {
 		return _spreadsheetRange.getLastPosition();
+	}
+	
+	/**
+	 * Links a {@link User} to the spreadsheet.
+	 *
+	 * @param user The {@link User} to link with the spreadsheet.
+	 */
+	public void linkUser(User user) {
+		user.linkSpreadsheet(this);
+		_users.add(user);
 	}
 
 	/**

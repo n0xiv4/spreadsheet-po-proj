@@ -59,16 +59,6 @@ public class Calculator {
 		}
 		return _instance;
 	}
-	
-	/**
-	 * Sets the current file for the calculator to the specified filename.
-	 * This method updates the current file associated with the calculator instance.
-	 *
-	 * @param filename The filename to set as the current file.
-	 */
-	private void setCurrentFile(String filename) {
-		_currentFile = filename;
-	}
 
 	/**
 	 * Checks if a filename is associated with the current spreadsheet.
@@ -189,6 +179,15 @@ public class Calculator {
 	}
 
 	/**
+	 * Checks whether the current spreadsheet has been changed or modified.
+	 *
+	 * @return {@code true} if the current spreadsheet has been changed; {@code false} otherwise.
+	 */
+	public boolean isCurrentSpreadsheetChanged() {
+		return _spreadsheet.isChanged();
+	}
+	
+	/**
 	 * Checks if a user with the same properties as the given user already exists in the user collection.
 	 *
 	 * @param userToTest The user to be tested for existence in the user collection.
@@ -204,12 +203,13 @@ public class Calculator {
 	}
 
 	/**
-	 * Checks whether the current spreadsheet has been changed or modified.
+	 * Sets the current file for the calculator to the specified filename.
+	 * This method updates the current file associated with the calculator instance.
 	 *
-	 * @return {@code true} if the current spreadsheet has been changed; {@code false} otherwise.
+	 * @param filename The filename to set as the current file.
 	 */
-	public boolean isCurrentSpreadsheetChanged() {
-		return _spreadsheet.isChanged();
+	private void setCurrentFile(String filename) {
+		_currentFile = filename;
 	}
 	
 }
